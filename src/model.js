@@ -22,6 +22,11 @@ export const REGISTRY={
  radial:{name:'Radial Field',category:'Fields',out:'field',icon:'field',description:'A spatial mask and direction. Only connected nodes use this field.',inputs:[],params:{x:num('Position X',57,-50,150,1,'%'),y:num('Position Y',48,-50,150,1,'%'),radius:num('Radius',52,3,140,1,'%'),squash:num('Height ratio',.82,.2,2,.01,'×'),falloff:num('Falloff',.65,0,1,.01),core:num('Centre softness',.25,0,1,.01),strength:num('Strength',1,0,1,.01),invert:{label:'Invert',value:false,type:'boolean'}}},
  linear:{name:'Linear Field',category:'Fields',out:'field',icon:'linear',description:'A directional gradient mask in canvas space.',inputs:[],params:{x:num('Position X',50,-50,150,1,'%'),y:num('Position Y',50,-50,150,1,'%'),radius:num('Ramp width',65,3,150,1,'%'),angle:num('Direction',-25,-180,180,1,'°'),falloff:num('Softness',.7,0,1,.01),strength:num('Strength',1,0,1,.01),invert:{label:'Invert',value:false,type:'boolean'}}},
  palette:{name:'Gradient',category:'Colour',out:'palette',icon:'palette',description:'Map a shared value into colours. With no Value connected, use the regular image gradient.',inputs:[{...input('value','signal',false),label:'Colour mapping'}],params:{a:{label:'Shadow',value:'#071678',type:'color'},b:{label:'Midtone',value:'#147aff',type:'color'},c:{label:'Highlight',value:'#cbf8ff',type:'color'},offset:num('Offset',0,-1,1,.01)}},
+ noise:{name:'Noise',category:'Values',out:'signal',icon:'wave',description:'One reusable, seeded smooth pattern. Sample it in space, along a path, per copy or uniformly. Connect Time to retime it independently.',inputs:[input('time','signal',false)],params:{domain:select('Sample by','spatial',['spatial','path','copy','uniform']),frequency:num('Frequency',1.8,.05,24,.05),speed:num('Evolution speed',.15,0,2,.01),seed:num('Seed',17,0,9999),octaves:num('Detail octaves',2,1,4),min:num('Minimum',0,-2000,2000,.01),max:num('Maximum',1,-2000,2000,.01),x:num('Pattern X',0,-1920,1920,1,'px'),y:num('Pattern Y',0,-1080,1080,1,'px')}},
+ random:{name:'Random',category:'Values',out:'signal',icon:'signal',description:'Stable seeded values for each copy, path sample or spatial cell. Scrubbing and export do not reshuffle the result.',inputs:[],params:{domain:select('Sample by','copy',['copy','path','spatial','uniform']),seed:num('Seed',31,0,9999),min:num('Minimum',0,-2000,2000,.01),max:num('Maximum',1,-2000,2000,.01)}},
+ math:{name:'Math',category:'Values',out:'signal',icon:'mix',description:'Combine reusable values or field weights. Multiply Noise by a field to localise its influence.',inputs:[input('a','signal',false),input('b','signal',false)],bypass:'a',params:{operation:select('Operation','multiply',['multiply','add','subtract','divide','min','max','power']),a:num('A fallback',1,-2000,2000,.01),b:num('B fallback',1,-2000,2000,.01)}},
+ remap:{name:'Remap',category:'Values',out:'signal',icon:'linear',description:'Give a shared pattern a destination-specific range. The upstream Noise and every other connection stay independent.',inputs:[input('value','signal')],bypass:'value',params:{inMin:num('Input minimum',0,-2000,2000,.01),inMax:num('Input maximum',1,-2000,2000,.01),outMin:num('Output minimum',0,-2000,2000,.01),outMax:num('Output maximum',1,-2000,2000,.01),clamp:{label:'Clamp input',value:true,type:'boolean'},smooth:{label:'Smooth transition',value:false,type:'boolean'}}},
+ time:{name:'Time',category:'Values',out:'signal',icon:'signal',description:'The same deterministic time used by playback, scrubbing and export. Drive evolution or a numeric parameter through Math and Remap.',inputs:[],params:{speed:num('Rate',1,-10,10,.01),offset:num('Offset',0,-100,100,.01,'s')}},
  displace:{name:'Displace',category:'Shape',out:'shape',icon:'wave',description:'Sample any connected value at each path point and displace it. Neutral value keeps the original contour; the optional field limits the effect.',inputs:[input('shape','shape'),input('value','signal',false),input('mask','field',false)],bypass:'shape',params:{amount:num('Amount',90,-300,300,1,'px'),midpoint:num('Neutral value',.5,-2,2,.01),direction:select('Direction','normal',['normal','x','y'])}},
  resample:{name:'Resample',category:'Shape',out:'shape',icon:'trim',description:'Add evenly spaced points before deformation, including along straight edges. Lower spacing gives finer detail at a higher evaluation cost.',inputs:[input('shape','shape')],bypass:'shape',params:{spacing:num('Point spacing',10,1,100,1,'px')}},
  lfo:{name:'LFO',category:'Motion',out:'signal',icon:'signal',description:'Drive numeric attributes with a repeating value. An optional Time input retimes this signal independently.',inputs:[input('time','signal',false)],params:{wave:select('Waveform','sine',['sine','triangle','pulse']),frequency:num('Frequency',.2,0,3,.01,'Hz'),amplitude:num('Amplitude',35,0,10000,1),offset:num('Centre value',0,-10000,10000,1),phase:num('Phase',0,0,360,1,'°')}},
@@ -29,12 +34,10 @@ export const REGISTRY={
  mix:{name:'Mix',category:'Output',out:'image',icon:'mix',description:'Combine two rendered image branches. Shape data cannot connect here.',inputs:[input('a','image'),input('b','image',false)],bypass:'a',params:{amount:num('Mix amount',.5,0,1,.01)}},
  output:{name:'Output',category:'Output',out:'image',icon:'output',description:'The final image. Pin it to keep seeing the result while editing upstream nodes.',inputs:[input('image','image')],params:{}}
 };
-
 Object.assign(REGISTRY,EXTENSIONS,{shapes:SHAPES});
 if (typeof ENABLE_TYPOGRAPHY !== 'undefined' && ENABLE_TYPOGRAPHY) {
   REGISTRY.typography = typographyNodeDefinition(num, select);
 }
-
 for(const kind of ['circle','rectangle','triangle','inlet'])REGISTRY[kind].hidden=true;
 REGISTRY.optical.inputs.push(input('material','material',false),input('effects','effects',false),input('background','image',false));
 REGISTRY.optical.params.renderer=select('Renderer','canvas',['canvas','gpu']);
@@ -43,57 +46,167 @@ export const CATEGORIES=['Sources','Shape','Fields','Values','Colour','Motion','
 // These are evaluation domains, not UI-only animation flags. Counts and global
 // modes stay uniform; numeric attributes with a spatial meaning can vary locally.
 for(const [kind,definition] of Object.entries(REGISTRY))for(const [key,p]of Object.entries(definition.params))if(p.type==='number')p.sample=definition.out==='signal'?'context':definition.out==='material'||definition.out==='effects'?'point':['deform','displace','outline'].includes(kind)||kind==='palette'||kind==='optical'&&key!=='speed'?'point':['shapes','circle','rectangle','triangle','transform','trim','resample'].includes(kind)||kind==='copy'&&key!=='count'?'copy':'uniform';
+const CANVAS_PARAMS={
+ canvasX:{...num('Translate X',0,-1920,1920,1,'px'),section:'transform',sample:'copy'},
+ canvasY:{...num('Translate Y',0,-1080,1080,1,'px'),section:'transform',sample:'copy'},
+ canvasScale:{...num('Scale',1,.1,4,.01,'×'),section:'transform',sample:'copy'},
+ canvasRotation:{...num('Rotate',0,-360,360,1,'°'),section:'transform',sample:'copy'}
+};
+const nativeTransforms=new Set(['shapes','path','svg','transform']);
 REGISTRY.shapes.params.scale={...num('Scale',1,.1,4,.01,'×'),section:'transform',sample:'copy'};
 for(const kind of ['shapes','path','svg'])for(const key of ['x','y','scale','rotation'])REGISTRY[kind].params[key].section='transform';
-
+const shapeDefinitions=new Map();
 export function nodeDefinition(node){
+ const data=node?.data||node;if(!data)return {};
  let base=REGISTRY[data.kind]||{};
- const d={...base,params:{...base.params}};
- if(data.kind==='group'){
-  const ports=data.ports||[];
-  d.inputs=ports.filter(p=>p.direction==='in').map(p=>({id:p.id,type:p.type,required:false,label:p.label}));
-  d.out=ports.find(p=>p.direction==='out')?.type||'shape';
-  d.params={};
- }
- return d;
+ if(data.kind==='inlet')base={...base,out:data.outputType||'shape'};
+ if(data.kind==='group')base={...base,out:data.outputType||'shape',inputs:data.inputs||[],params:Object.fromEntries((data.exposed||[]).map(e=>[e.key,{...e.schema,label:e.label||e.schema.label}]))};
+ if(base.out!=='shape'||nativeTransforms.has(data.kind))return base;
+ if(data.kind!=='group'&&data.kind!=='inlet'&&shapeDefinitions.has(data.kind))return shapeDefinitions.get(data.kind);
+ const result={...base,params:{...base.params,...CANVAS_PARAMS}};
+ if(data.kind!=='group'&&data.kind!=='inlet')shapeDefinitions.set(data.kind,result);return result;
 }
+export function canvasTransformState(graph,id){const node=graph.nodes.find(n=>n.id===id);if(!node||nodeDefinition(node).out!=='shape')throw new Error('Select geometry to transform.');if(node.data.bypassed)throw new Error('Enable this node before editing its transform.');const native=nativeTransforms.has(node.data.kind),keys=native?{x:'x',y:'y',scale:'scale',rotation:'rotation'}:{x:'canvasX',y:'canvasY',scale:'canvasScale',rotation:'canvasRotation'},definition=nodeDefinition(node),params={},limits={};for(const [name,key]of Object.entries(keys)){params[name]=node.data.params[key]??definition.params[key].value;limits[name]=[definition.params[key].min,definition.params[key].max];}const driven=Object.keys(keys).filter(name=>graph.edges.some(e=>e.target===id&&e.targetHandle==='param:'+keys[name]));return {id,params,keys,limits,driven};}
+export function updateCanvasTransform(graph,id,patch){const state=canvasTransformState(graph,id),values={};for(const [name,value]of Object.entries(patch)){if(!state.keys[name]||!Number.isFinite(value))throw new Error('Invalid transform value.');if(state.driven.includes(name))throw new Error('Disconnect this driven transform value before dragging it.');values[state.keys[name]]=clamp(value,...state.limits[name]);}return {...graph,nodes:graph.nodes.map(n=>n.id===id?{...n,data:{...n.data,params:{...n.data.params,...values}}}:n)};}
 
-export function canvasTransformState(graph,id){const node=graph.nodes.find(n=>n.id===id);if(!node||nodeDefinition(node).out!=='shape')throw new Error('Select geometry to transform.');if(node.data.bypassed)throw new Error('Enable this node before editing its transform.');const native=nativeTransforms.has(node.data.kind),keys=native?{x:'x',y:'y',scale:'scale',rotation:'rotation'}:{x:'canvasX',y:'canvasY',scale:'canvasScale',rotation:'canvasRotation'},definition=nodeDefinition(node),params={},limits={};for(const [name,key]of Object.entries(keys)){params[name]=node.data.params[key]??definition.params[key]?.value??(name==='scale'?1:0);limits[name]=definition.params[key]?[definition.params[key].min,definition.params[key].max]:name==='scale'?[.05,20]:[-4000,4000];}return {keys,params,limits};}
-
-const nativeTransforms=new Set(['shapes','path','svg','typography']);
-const CANVAS_PARAMS={canvasX:num('Canvas X',0,-4000,4000,1,'px'),canvasY:num('Canvas Y',0,-4000,4000,1,'px'),canvasScale:num('Canvas Scale',1,.05,20,.01,'×'),canvasRotation:num('Canvas Rotation',0,-360,360,1,'°')};
-for(const [kind,definition] of Object.entries(REGISTRY))if(definition.out==='shape'&&!nativeTransforms.has(kind))Object.assign(definition.params,CANVAS_PARAMS);
-
-function bounds(shapes){let min=[1e9,1e9],max=[-1e9,-1e9];for(const s of shapes)for(const p of s.points){min[0]=Math.min(min[0],p[0]);min[1]=Math.min(min[1],p[1]);max[0]=Math.max(max[0],p[0]);max[1]=Math.max(max[1],p[1]);}return [(min[0]+max[0])/2,(min[1]+max[1])/2];}
-function transformShapes(shapes,{x=0,y=0,scale=1,rotation=0},origin=bounds(shapes)){const a=rotation*Math.PI/180,c=Math.cos(a),s=Math.sin(a);return shapes.map(sh=>({...sh,points:sh.points.map(([px,py])=>{const dx=px-origin[0],dy=py-origin[1];return [origin[0]+(dx*c-dy*s)*scale+x,origin[1]+(dx*s+dy*c)*scale+y];})}));}
-
+export function newNode(kind,position={x:0,y:0},id){
+ const legacy=['circle','rectangle','triangle'].includes(kind)?kind:null;if(legacy)kind='shapes';
+ if(!REGISTRY[kind])throw new Error('Unknown node type');
+ const result={id:id||kind+'-'+crypto.randomUUID().slice(0,8),type:'effect',position,data:{kind,label:REGISTRY[kind].name,bypassed:false,params:Object.fromEntries(Object.entries(nodeDefinition({kind}).params).map(([k,p])=>[k,p.value]))}};
+ if(legacy){Object.assign(result.data.params,Object.fromEntries(Object.entries(REGISTRY[legacy].params).map(([k,p])=>[k,p.value])));result.data.params.shape=legacy==='triangle'?'polygon':legacy;if(legacy==='triangle')result.data.params.sides=3;}
+ if(kind==='path'||kind==='svg')result.data.paths=structuredClone(DEFAULT_PATH);
+ if(kind==='group'){const source=newNode('circle',{x:0,y:0},'source');result.data.graph={version:1,name:'Group',nodes:[source],edges:[],preview:'source',duration:6};result.data.outputId='source';result.data.outputType='shape';result.data.inputs=[];result.data.exposed=[];}
+ return result;
+}
+export function portType(node,handle){
+ if(!node)return null;
+ if(handle?.startsWith('param:'))return nodeDefinition(node)?.params[handle.slice(6)]?.type==='number'?'signal':null;
+ return nodeDefinition(node)?.inputs.find(i=>i.id===handle)?.type||null;
+}
+export function compatibleTypes(out,type){return out===type||out==='field'&&type==='signal';}
+export function validateConnection(graph,c,ignoreId){
+ const from=graph.nodes.find(n=>n.id===c.source),to=graph.nodes.find(n=>n.id===c.target);
+ if(!from||!to)return 'Both nodes must exist.';
+ if(from.id===to.id)return 'A node cannot feed itself.';
+ const type=portType(to,c.targetHandle),out=nodeDefinition(from).out;
+ if(!compatibleTypes(out,type))return `${out[0].toUpperCase()+out.slice(1)} cannot connect to ${type||'this input'}.`;
+ const seen=new Set(),stack=[to.id];
+ while(stack.length){const id=stack.pop();if(id===from.id)return 'That connection would create a cycle.';if(seen.has(id))continue;seen.add(id);for(const e of graph.edges)if(e.id!==ignoreId&&e.source===id)stack.push(e.target);}
+ return null;
+}
+export function connect(graph,c,ignoreId){
+ const error=validateConnection(graph,c,ignoreId);if(error)throw new Error(error);
+ const edge={id:'edge-'+crypto.randomUUID().slice(0,10),source:c.source,target:c.target,sourceHandle:'out',targetHandle:c.targetHandle};
+ return {...graph,edges:[...graph.edges.filter(e=>e.id!==ignoreId&&!(e.target===c.target&&e.targetHandle===c.targetHandle)),edge]};
+}
+export function insertOnEdge(graph,edgeId,node){
+ const edge=graph.edges.find(e=>e.id===edgeId);if(!edge)throw new Error('Connection no longer exists.');
+ const primary=nodeDefinition(node).inputs.find(p=>p.required);
+ const from=graph.nodes.find(n=>n.id===edge.source),out=nodeDefinition(from).out;
+ if(!primary||!compatibleTypes(out,primary.type)||!compatibleTypes(nodeDefinition(node).out,portType(graph.nodes.find(n=>n.id===edge.target),edge.targetHandle)))throw new Error('This node cannot be inserted on that connection.');
+ let result={...graph,nodes:[...graph.nodes,node],edges:graph.edges.filter(e=>e.id!==edgeId)};
+ result=connect(result,{source:edge.source,target:node.id,targetHandle:primary.id});
+ return connect(result,{source:node.id,target:edge.target,targetHandle:edge.targetHandle});
+}
+export function starter(name='Blue glass study'){
+ const positions={circle:[0,80],outline:[205,80],trim:[410,80],copy:[615,80],deform:[820,80],optical:[1030,80],output:[1260,80],radial:[620,270],palette:[1030,330],lfo:[210,300]};
+ const nodes=Object.entries(positions).map(([kind,[x,y]])=>newNode(kind,{x,y},kind+'1'));
+ const edges=[];const wire=(s,t,h)=>edges.push({id:`${s}-${t}-${h}`,source:s+'1',target:t+'1',sourceHandle:'out',targetHandle:h});
+ wire('circle','outline','shape');wire('outline','trim','shape');wire('trim','copy','shape');wire('copy','deform','shape');wire('deform','optical','shape');wire('palette','optical','palette');wire('radial','deform','mask');wire('radial','optical','field');wire('optical','output','image');
+ return {version:1,name,nodes,edges,preview:'output1',duration:6};
+}
+export function sharedNoiseStudy(){
+ const positions={circle:[0,30],outline:[210,30],copy:[420,30],displace:[660,30],optical:[1100,30],output:[1330,30],noise:[210,280],remap:[660,300],palette:[880,440],radial:[440,520]};
+ let g={version:1,name:'One Noise · three uses',nodes:Object.entries(positions).map(([kind,[x,y]])=>newNode(kind,{x,y},kind+'1')),edges:[],preview:'output1',duration:12};
+ const param=(kind,values)=>Object.assign(g.nodes.find(n=>n.id===kind+'1').data.params,values);
+ param('circle',{radius:290,x:700});param('outline',{width:36});param('copy',{count:4,x:150,y:5,scale:.93});param('displace',{amount:210});param('noise',{frequency:1.5,speed:.17});param('remap',{outMin:.05,outMax:1});param('optical',{glow:65,body:.7,speed:0,stretch:0});param('radial',{x:60,y:50,radius:75});
+ g.nodes.find(n=>n.id==='remap1').data.label='Glow range';
+ for(const [source,target,targetHandle]of [['circle','outline','shape'],['outline','copy','shape'],['copy','displace','shape'],['displace','optical','shape'],['optical','output','image'],['noise','displace','value'],['noise','remap','value'],['remap','optical','param:strength'],['noise','palette','value'],['palette','optical','palette'],['radial','displace','mask']])g=connect(g,{source:source+'1',target:target+'1',targetHandle});
+ return g;
+}
+export function cleanGraph(raw,depth=0){
+ if(depth>6)throw new Error('Groups may be nested up to six levels.');
+ if(!raw||raw.version!==1||!Array.isArray(raw.nodes)||!Array.isArray(raw.edges)||raw.nodes.length>60||raw.edges.length>160)throw new Error('Choose a Nodes Lab project (up to 60 nodes).');
+ const ids=new Set();const nodes=raw.nodes.map(n=>{
+  if(typeof n.id!=='string'||ids.has(n.id)||!REGISTRY[n.data?.kind])throw new Error('The project contains an invalid node.');ids.add(n.id);
+  const out=newNode(n.data.kind,{x:clamp(Number(n.position?.x)||0,-10000,10000),y:clamp(Number(n.position?.y)||0,-10000,10000)},n.id);out.data.label=String(['circle','rectangle','triangle'].includes(n.data.kind)&&n.data.label===REGISTRY[n.data.kind].name?'Shapes':n.data.label||out.data.label).slice(0,60);out.data.bypassed=!!n.data.bypassed&&!!nodeDefinition(n).bypass;
+  if(['path','svg'].includes(n.data.kind))out.data.paths=cleanPaths(n.data.paths||DEFAULT_PATH);
+  if(n.data.kind==='bitmap'){if(typeof n.data.image!=='string'||n.data.image.length>5500000||!/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/]+=*$/.test(n.data.image))throw new Error('Invalid embedded image.');out.data.image=n.data.image;out.data.aspect=clamp(Number(n.data.aspect)||1,.05,20);}
+  if(n.data.kind==='inlet'){out.data.inputId=String(n.data.inputId||'input').slice(0,100);out.data.outputType=Object.keys(TYPES).includes(n.data.outputType)?n.data.outputType:'shape';}
+  if(n.data.kind==='group'){out.data.graph=cleanGraph(n.data.graph,depth+1);out.data.outputId=n.data.outputId||out.data.graph.preview;const source=out.data.graph.nodes.find(v=>v.id===out.data.outputId);if(!source)throw new Error('The group needs an output node.');out.data.outputType=nodeDefinition(source).out;out.data.inputs=(n.data.inputs||[]).slice(0,32).map(v=>{if(typeof v.id!=='string'||!Object.keys(TYPES).includes(v.type))throw new Error('Invalid group input.');return {id:v.id.slice(0,100),type:v.type,required:!!v.required,label:String(v.label||v.id).slice(0,60)};});out.data.exposed=(n.data.exposed||[]).slice(0,32).map(e=>{const target=out.data.graph.nodes.find(v=>v.id===e.nodeId),schema=target&&nodeDefinition(target).params?.[e.param];if(!schema||schema.type!=='number')throw new Error('Invalid exposed parameter.');return {key:String(e.key).slice(0,50),nodeId:e.nodeId,param:e.param,label:String(e.label||schema.label).slice(0,60),schema:{...schema}};});}
+  for(const [key,def]of Object.entries(nodeDefinition(out).params)){const val=n.data.params?.[key];if(def.type==='number'&&Number.isFinite(val))out.data.params[key]=clamp(val,def.min,def.max);else if(def.type==='color'&&/^#[a-f0-9]{6}$/i.test(val))out.data.params[key]=val;else if(def.type==='select'&&def.options.includes(val))out.data.params[key]=val;else if(def.type==='boolean'&&typeof val==='boolean')out.data.params[key]=val;}
+  return out;
+ });
+ let graph={version:1,name:String(raw.name||'Untitled study').slice(0,80),nodes,edges:[],duration:clamp(Number(raw.duration)||6,1,30),preview:ids.has(raw.preview)?raw.preview:nodes.find(n=>n.data.kind==='output')?.id||nodes.at(-1)?.id};
+ for(const e of raw.edges)graph=connect(graph,e);
+ return graph;
+}
+function bounds(shapes){let left=Infinity,top=Infinity,right=-Infinity,bottom=-Infinity;for(const shape of shapes)for(const [x,y]of shape.points){left=Math.min(left,x);top=Math.min(top,y);right=Math.max(right,x);bottom=Math.max(bottom,y);}return Number.isFinite(left)?[(left+right)/2,(top+bottom)/2]:[W/2,H/2];}
+function transformShapes(shapes,{x=0,y=0,scale=1,rotation=0},origin=bounds(shapes)){
+ const a=rotation*Math.PI/180,c=Math.cos(a),sn=Math.sin(a);
+ const point=([px,py])=>{const dx=(px-origin[0])*scale,dy=(py-origin[1])*scale;return [origin[0]+dx*c-dy*sn+x,origin[1]+dx*sn+dy*c+y];};
+ return shapes.map(s=>({...s,width:s.width*scale,widthScale:(s.widthScale||1)*scale,origin:point(s.origin||origin),points:s.points.map(point)}));
+}
+function trimShape(s,start,end,offset){
+ let span=(end-start)/100;if(span<0)span+=1;if(Math.abs(end-start)>=100)span=1;if(span<.00001)return {...s,points:[],closed:false};
+ if(span>=.99999)return s;
+ const pts=s.closed?[...s.points,s.points[0]]:s.points,dist=[0];for(let i=1;i<pts.length;i++)dist.push(dist.at(-1)+Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]));const len=dist.at(-1)||1;
+ const at=t=>{const d=((t%1+1)%1)*len;let j=1;while(j<dist.length-1&&dist[j]<d)j++;const f=(d-dist[j-1])/(dist[j]-dist[j-1]||1);return [pts[j-1][0]+(pts[j][0]-pts[j-1][0])*f,pts[j-1][1]+(pts[j][1]-pts[j-1][1])*f];};
+ const n=Math.max(12,Math.ceil(s.points.length*span));return {...s,points:Array.from({length:n+1},(_,i)=>at(start/100+offset/360+span*i/n)),closed:false};
+}
+function resampleShape(shape,spacing){
+ if(shape.points.length<2)return shape;const points=shape.closed?[...shape.points,shape.points[0]]:shape.points,dist=[0];
+ for(let i=1;i<points.length;i++)dist.push(dist.at(-1)+Math.hypot(points[i][0]-points[i-1][0],points[i][1]-points[i-1][1]));
+ const length=dist.at(-1),segments=Math.max(2,Math.ceil(length/spacing));if(segments>4096)throw new Error('Resample limit: increase Point spacing (4096 points per path).');
+ let j=1;const result=Array.from({length:segments+(shape.closed?0:1)},(_,i)=>{const d=i/segments*length;while(j<dist.length-1&&dist[j]<d)j++;const a=points[j-1],b=points[j],t=(d-dist[j-1])/(dist[j]-dist[j-1]||1);return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];});return {...shape,points:result};
+}
+export const fieldAt=fieldSample;
 export function createEvaluator(){
- const cache=new Map(),inputs=new Map(),groupEngines=new WeakMap();
- return {evaluate,invalidate:()=>cache.clear(),setInputs:edges=>{inputs.clear();for(const e of edges){if(!inputs.has(e.target))inputs.set(e.target,new Map());inputs.get(e.target).set(e.targetHandle,e);}}};
- function evaluate(graph,id,time=0,context=ROOT_CONTEXT,external={},namespace='',seen=new Set()){
-  const key=namespace+id+'@'+time+'/'+context.instance;
-  if(cache.has(key))return cache.get(key);
-  if(seen.has(id))throw new Error('Cycle detected');
-  seen.add(id);
-  const node=graph.nodes.find(n=>n.id===id);if(!node)throw new Error('Missing node');
+ const entries=new Map(),groupEngines=new Map();let previousNodes,previousEdges,map,inputs,contextual;
+ return {evaluate(graph,target=graph.preview,time=0,options=typeof graph.evaluationOptions==='function'?graph.evaluationOptions(time):graph.evaluationOptions||{}){
+  if(graph.nodes!==previousNodes||graph.edges!==previousEdges){
+   previousNodes=graph.nodes;previousEdges=graph.edges;map=new Map(graph.nodes.map(n=>[n.id,n]));inputs=new Map();
+   for(const e of graph.edges){if(!inputs.has(e.target))inputs.set(e.target,new Map());inputs.get(e.target).set(e.targetHandle,e);}
+   for(const [key,entry]of entries)if(!map.has(entry.nodeId))entries.delete(key);
+   const valueContexts=new Map(),valueContext=(id,seen=new Set())=>{if(valueContexts.has(id))return valueContexts.get(id);if(seen.has(id))return false;seen.add(id);const n=map.get(id),kind=n?.data.kind;const v=['radial','linear','box','shapeField'].includes(kind)||['noise','random'].includes(kind)&&n.data.params.domain!=='uniform'||[...(inputs.get(id)?.values()||[])].some(e=>valueContext(e.source,new Set(seen)));valueContexts.set(id,v);return v;};
+   contextual=new Map();const walk=(id,seen=new Set())=>{
+    if(contextual.has(id))return contextual.get(id);if(seen.has(id))return false;seen.add(id);
+    const node=map.get(id),d=nodeDefinition(node);if(!d||d.out!=='shape')return false;
+    const edges=[...(inputs.get(id)?.values()||[])],result=node.data.kind==='group'||edges.some(e=>(e.targetHandle.startsWith('param:')||e.targetHandle==='value')&&valueContext(e.source)||nodeDefinition(map.get(e.source))?.out==='shape'&&walk(e.source,new Set(seen)));
+    contextual.set(id,result);return result;
+   };for(const id of map.keys())walk(id);
+  }
+  return evaluateGraph(graph,target,time,{entries,map,inputs,contextual,groupEngines,options});
+ }};
+}
+export function evaluate(graph,target=graph.preview,time=0,options=typeof graph.evaluationOptions==='function'?graph.evaluationOptions(time):graph.evaluationOptions||{}){return createEvaluator().evaluate(graph,target,time,options);}
+function evaluateGraph(graph,target,time,{entries,map,inputs,contextual,groupEngines,options}){
+ const cache=new Map(),local=new Map(),visiting=new Set(),animated=new Map(),root={...ROOT_CONTEXT,...options.context,time},namespace=options.namespace||'',rootGraph=options.rootGraph||graph,rootTarget=options.rootTarget||target,external=options.external||{};
+ const get=(id,context=root)=>{
+  const key=contextual.get(id)?id+'@'+context.instance+':'+context.index+':'+context.count+':'+context.position.join(','):id;
+  if(local.has(key))return local.get(key);const node=map.get(id);if(!node)throw new Error('Select a node to preview.');if(visiting.has(id))throw new Error('Cycle detected.');visiting.add(id);
   const d=nodeDefinition(node),params={...Object.fromEntries(Object.entries(d.params).map(([k,p])=>[k,p.value])),...node.data.params},bindings={},edgeAt=h=>inputs.get(id)?.get(h);
-  const at=(key,c=context)=>{const edge=edgeAt('param:'+key);if(!edge)return params[key];const value=evaluate(graph,edge.source,time,c,external,namespace,new Set(seen)).value;bindings[key]=value;return sampleSignal(value,c);};
-  const read=(handle,required=false)=>{const edge=edgeAt(handle);if(!edge){if(required)throw new Error(node.data.label+': connect its '+handle+' input.');return null;}return evaluate(graph,edge.source,time,context,external,namespace,new Set(seen)).value;};
-  const fieldAt=(field,pt)=>fieldSample(field,pt);
-  let out,isAnimated=false;
-  const kind=node.data.kind;
-  if(node.data.bypassed&&d.bypass){const source=read(d.bypass,true);out=source;}
+  const read=(h,required=false,ctx=context)=>{const e=edgeAt(h);if(!e){if(required)throw new Error(`${node.data.label}: ${h} input required.`);return null;}return get(e.source,ctx);};
+  for(const [k,def]of Object.entries(d.params)){if(kindForParameters(node)==='shapes'&&!parameterVisible(def,params))continue;const e=edgeAt('param:'+k);if(e){bindings[k]=get(e.source);params[k]=clamp(sampleSignal(bindings[k],context),def.min,def.max);}}
+  const samplers=Object.fromEntries(Object.entries(bindings).map(([k,v])=>[k,signalFunction(v)]));
+  const at=(key,ctx)=>samplers[key]?clamp(samplers[key](ctx),d.params[key].min,d.params[key].max):params[key];
+  const finish=out=>{visiting.delete(id);local.set(key,out);cache.set(id,out);return out;};
+  if(node.data.bypassed&&d.bypass){let out=read(d.bypass);if(d.out==='signal'&&(!out||out.type==='field')){const source=out;out={type:'signal',op:'math',params:{operation:'add',a:params.a??0,b:0},bindings:source?{}:bindings,limits:{},inputs:source?{a:source}:{},domain:source?signalDomain(source):signalDomain(bindings.a),animated:!!animated.get(edgeAt('param:a')?.source)};out.value=sampleSignal(out,context);}if(!out)throw new Error(`${node.data.label}: ${d.bypass} input required.`);animated.set(id,animated.get(edgeAt(d.bypass)?.source)||!!out.animated);return finish(out);}
+  for(const p of d.inputs)if(p.required&&!edgeAt(p.id))throw new Error(`${node.data.label}: ${p.id} input required.`);
+  const dependencyValues=[...(node.data.kind==='inlet'?[external[node.data.inputId]]:[]),...d.inputs.map(port=>read(port.id,port.required)),...Object.values(bindings)];
+  const p=params,kind=node.data.kind;
+  const changesWithTime=(kind==='lfo'&&!edgeAt('time')&&p.frequency!==0&&p.amplitude!==0)||(kind==='time'&&p.speed!==0)||(kind==='noise'&&!edgeAt('time')&&p.speed!==0&&p.min!==p.max)||(kind==='deform'&&p.speed!==0&&p.amount!==0)||kind==='fluid'||(kind==='contourPulse'&&p.frequency!==0)||(kind==='venetian'&&(p.speed!==0||p.timeDisplacement!==0));
+  const isAnimated=changesWithTime||(kind==='optical'&&p.speed!==0)||[...(inputs.get(id)?.values()||[])].some(e=>animated.get(e.source));animated.set(id,isAnimated);
+  const previous=entries.get(key);
+  if(previous&&previous.data===node.data&&(!changesWithTime||previous.time===time)&&!(kind==='group'&&previous.animated&&previous.time!==time)&&dependencyValues.length===previous.dependencies.length&&dependencyValues.every((v,i)=>v===previous.dependencies[i])){countMetric('cache hits');if(kind==='group')animated.set(id,previous.animated||isAnimated);return finish(previous.value);}
+  countMetric('computed nodes');let out;
+  if(kind==='shapes'){const shape=primitiveGeometry(p,(key,position,u)=>at(key,{...context,position,u}));out={type:'shape',shapes:[{...shape,copy:context.index,count:context.count,instance:context.instance,objectInstance:namespace+id+context.instance}]};}
   else if(kind==='inlet'){out=external[node.data.inputId];if(!out)throw new Error(`${node.data.label}: connect its group input.`);}
   else if(kind==='group'){
-   let engine=groupEngines.get(node.data);if(!engine){engine=createEvaluator();groupEngines.set(node.data,engine);}
-   const childEdges=node.data.graph.edges.filter(e=>e.target!=='group-out');
-   engine.setInputs(childEdges);
-   const ext={};for(const port of node.data.ports.filter(p=>p.direction==='in'))ext[port.id]=read(port.id);
-   const outlet=node.data.graph.edges.find(e=>e.target==='group-out');
-   if(!outlet)throw new Error(node.data.label+': connect a node to Group Output.');
-   out=engine.evaluate(node.data.graph,outlet.source,time,context,ext,namespace+id+'/',new Set()).value;
-  }
-  else if(kind==='path'||kind==='svg')out={type:'shape',shapes:transformShapes(samplePaths(node.data.paths||DEFAULT_PATH).map(s=>({...s,objectInstance:namespace+id+context.instance})),p)};
+   let engine=groupEngines.get(node.data);if(!engine){engine=createEvaluator();groupEngines.set(node.data,engine);if(groupEngines.size>80)groupEngines.delete(groupEngines.keys().next().value);}
+   const values=Object.fromEntries(d.inputs.map(port=>[port.id,read(port.id,port.required)]));for(const exposed of node.data.exposed||[])values['param:'+exposed.key]=bindings[exposed.key]||{type:'signal',value:p[exposed.key],domain:'uniform'};
+   const result=engine.evaluate(node.data.graph,node.data.outputId,time,{context,external:values,rootGraph,rootTarget,namespace:namespace+id+'/'});if(result.error)throw new Error(node.data.label+': '+result.error);out=result.value;animated.set(id,result.animated||isAnimated);
+  }else if(kind==='path'||kind==='svg')out={type:'shape',shapes:transformShapes(samplePaths(node.data.paths||DEFAULT_PATH).map(s=>({...s,objectInstance:namespace+id+context.instance})),p)};
   else if(kind==='bitmap')out={type:'image',background:'#070b22',layers:[{kind:'bitmap',id:namespace+id,image:node.data.image,aspect:node.data.aspect||1,params:p,bindings,opacity:1}]};
   else if(kind==='glass')out={type:'material',kind,params:p,bindings,mask:read('mask')};
   else if(d.out==='effects')out={type:'effects',items:[...(read('effects')?.items||[]),{kind,id:namespace+id,params:p,bindings,mask:read('mask'),time:read('time')}]};
@@ -110,12 +223,16 @@ export function createEvaluator(){
   else if(kind==='resample'){
    const shapes=read('shape',true).shapes.map(s=>resampleShape(s,at('spacing',shapeContext(s,time))));if(shapes.reduce((n,s)=>n+s.points.length,0)>65536)throw new Error('Resample limit: increase Point spacing (65536 points total).');out={type:'shape',shapes};
   }else if(kind==='transform'){
-   const source=read('shape',true),values=Object.fromEntries(['x','y','scale','rotation'].map(k=>[k,at(k,context)]));
-   out={type:'shape',shapes:transformShapes(source.shapes,values)};
+   const shapes=read('shape',true).shapes;
+   out={type:'shape',shapes:Object.keys(bindings).length?shapes.flatMap(s=>{const c=shapeContext(s,time),p=Object.fromEntries(Object.keys(params).map(k=>[k,at(k,c)]));return transformShapes([s],p);}):transformShapes(shapes,p)};
   }else if(kind==='copy'){
-   const source=read('shape',true).shapes,count=Math.max(1,Math.round(at('count'))),values=Object.fromEntries(['x','y','scale','rotation','fade'].map(k=>[k,at(k,context)]));
+   const shapes=read('shape',true).shapes,c=bounds(shapes),count=Math.round(p.count);
+   if(shapes.length*count>128)throw new Error('Copy limit: reduce the count to keep this prototype responsive (128 paths).');
    out={type:'shape',shapes:Array.from({length:count},(_,i)=>{
-    const ctx={...context,index:i,count,instance:(context.instance||'')+'/'+i};
+    const ctx={...context,position:[c[0]+p.x*i,c[1]+p.y*i],index:context.index*count+i,count:context.count*count,instance:context.instance+'/'+id+':'+i};
+    const values=Object.fromEntries(Object.keys(p).map(k=>[k,k==='count'?count:at(k,ctx)]));
+    ctx.position=[c[0]+values.x*i,c[1]+values.y*i];
+    const source=contextual.get(edgeAt('shape').source)?read('shape',true,ctx).shapes:shapes;
     return transformShapes(source,{x:values.x*i,y:values.y*i,scale:values.scale**i,rotation:values.rotation*i},c).map((s,j)=>({...s,copy:ctx.index*source.length+j,count:ctx.count*source.length,instance:ctx.instance+'/'+j,objectInstance:ctx.instance,opacity:s.opacity*values.fade**i}));
    }).flat()};
   }else if(kind==='deform'||kind==='displace'){
@@ -135,9 +252,9 @@ export function createEvaluator(){
    out={type:'signal',op:kind,params:{...node.data.params},bindings,limits:Object.fromEntries(Object.entries(d.params).filter(([,v])=>v.type==='number').map(([k,v])=>[k,[v.min,v.max]])),inputs:scalarInputs,domain,contexts:[...new Set(domains)],animated:!!isAnimated};out.value=sampleSignal(out,context);
   }else if(kind==='optical'||kind==='fluid'){
    const shape=read('shape',true),palette=read('palette')||{colors:['#071678','#147aff','#cbf8ff'],offset:0},field=read('field');
-   out={type:'image',background:p.background||'#070b22',layers:[{kind,id:namespace+id,shapes:shape.shapes,palette,field,params:p,bindings,opacity:1}]};
+   out={type:'image',background:p.background,layers:[{id:namespace+id,kind,shapes:shape.shapes,palette,field,material:kind==='optical'?read('material'):null,effects:read('effects')?.items||[],backgroundImage:read('background'),geometryAnimated:!!animated.get(edgeAt('shape')?.source),params:p,bindings,opacity:1}]};
   }else if(kind==='mix'){
-   const a=read('a',true),b=read('b');out={type:'image',background:a.background,layers:[...a.layers,...(b?.layers||[])],mix:p.amount};
+   const a=read('a',true),b=read('b');out=b?{type:'image',background:a.background,layers:[...a.layers.map(l=>copyImageLayer(l,l.opacity*(1-p.amount))),...b.layers.map(l=>copyImageLayer(l,l.opacity*p.amount))]}:a;
   }else if(kind==='output')out=read('image',true);
   else if(kind==='typography' && ENABLE_TYPOGRAPHY){
    const shapes = textToShapes({
@@ -161,17 +278,18 @@ export function createEvaluator(){
      count: context.count,
      instance: (context.instance || '') + '/char' + (sh.charIndex ?? 0)
    })) };
-  }else if(kind==='shapes'){
-   const shapes=primitiveGeometry(p,(key,pt,u)=>at(key,{...context,position:pt,u}));
-   out={type:'shape',shapes:Object.keys(bindings).length?shapes.flatMap(s=>{const c=shapeContext(s,time),p=Object.fromEntries(Object.keys(params).map(k=>[k,at(k,c)]));return transformShapes([s],p);}):transformShapes(shapes,p)};
-  }else throw new Error('Unsupported node: '+kind);
-  const active=Object.keys(CANVAS_PARAMS).some(key=>params[key]!==undefined);
-  if(active&&out?.type==='shape'){const resolved=c=>({x:at('canvasX',c),y:at('canvasY',c),scale:at('canvasScale',c),rotation:at('canvasRotation',c)}),local=Object.keys(CANVAS_PARAMS).some(key=>bindings[key]);out={...out,shapes:local?out.shapes.flatMap(s=>transformShapes([s],resolved(shapeContext(s,time)))):transformShapes(out.shapes,resolved(context))};}
-  const result={value:out,animated:isAnimated};
-  cache.set(key,result);
-  return result;
- }
+  }
+  if(out?.type==='shape'&&!nativeTransforms.has(kind)){
+   const active=Object.entries(CANVAS_PARAMS).some(([key,def])=>bindings[key]||p[key]!==def.value);
+   if(active){const resolved=c=>({x:at('canvasX',c),y:at('canvasY',c),scale:at('canvasScale',c),rotation:at('canvasRotation',c)}),local=Object.keys(CANVAS_PARAMS).some(key=>bindings[key]);out={...out,shapes:local?out.shapes.flatMap(s=>transformShapes([s],resolved(shapeContext(s,time)))):transformShapes(out.shapes,resolved(context))};}
+  }
+  if((kind==='optical'||kind==='fluid')&&out?.layers?.[0])renderTimelines.set(out.layers[0],{graph:rootGraph,target:rootTarget,id:namespace+id});
+  entries.set(key,{nodeId:id,data:node.data,dependencies:dependencyValues,time,value:out,animated:!!animated.get(id)});return finish(out);
+ };
+ try{const value=get(target);return {value,cache,animated:!!animated.get(target),error:null};}catch(error){return {value:null,cache,error:error.message};}
 }
+export function createHistory(initial,limit=75){let states=[structuredClone(initial)],index=0;return {record(next){const a=JSON.stringify(states[index]),b=JSON.stringify(next);if(a===b)return;states.splice(index+1);states.push(structuredClone(next));if(states.length>limit)states.shift();index=states.length-1;},undo(){return index>0?structuredClone(states[--index]):null;},redo(){return index<states.length-1?structuredClone(states[++index]):null;},canUndo(){return index>0;},canRedo(){return index<states.length-1;}};}
 
-function trimShape(shape,start,end,offset){const len=shape.points.length,a=((start+offset)/100*len)|0,b=((end+offset)/100*len)|0;return {...shape,points:shape.points.slice(Math.min(a,b),Math.max(a,b)+1),closed:false};}
-function resampleShape(shape,spacing){const points=[],pts=shape.points;for(let i=0;i<pts.length-(shape.closed?0:1);i++){const a=pts[i],b=pts[(i+1)%pts.length],d=Math.hypot(b[0]-a[0],b[1]-a[1]),n=Math.max(1,Math.round(d/spacing));for(let k=0;k<n;k++)points.push([a[0]+(b[0]-a[0])*k/n,a[1]+(b[1]-a[1])*k/n]);}if(!shape.closed)points.push(pts.at(-1));return {...shape,points};}
+function copyImageLayer(layer,opacity){const out={...layer,opacity};if(renderTimelines.has(layer))renderTimelines.set(out,renderTimelines.get(layer));return out;}
+
+function kindForParameters(node){return node.data.kind;}
