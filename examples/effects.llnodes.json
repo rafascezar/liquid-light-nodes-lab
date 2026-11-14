@@ -1,0 +1,247 @@
+{
+  "version": 1,
+  "name": "Light · contour effects",
+  "nodes": [
+    {
+      "id": "shapes1",
+      "type": "effect",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "data": {
+        "kind": "shapes",
+        "label": "Shapes",
+        "bypassed": false,
+        "params": {
+          "shape": "circle",
+          "radius": 320,
+          "ellipseRatio": 1,
+          "width": 640,
+          "height": 640,
+          "corner": 80,
+          "individualCorners": false,
+          "cornerTL": 80,
+          "cornerTR": 80,
+          "cornerBR": 80,
+          "cornerBL": 80,
+          "sides": 6,
+          "roundness": 0,
+          "starPoints": 5,
+          "outerDiameter": 680,
+          "innerDiameter": 320,
+          "outerRoundness": 0,
+          "innerRoundness": 0,
+          "x": 960,
+          "y": 540,
+          "rotation": 0,
+          "fillMode": "outline",
+          "strokeWidth": 35,
+          "startAngle": 20,
+          "endAngle": 300,
+          "closure": "open",
+          "divisions": 8,
+          "detail": 256,
+          "individualRadii": false,
+          "reverse": false,
+          "scale": 1
+        }
+      }
+    },
+    {
+      "id": "palette1",
+      "type": "effect",
+      "position": {
+        "x": 0,
+        "y": 330
+      },
+      "data": {
+        "kind": "palette",
+        "label": "Gradient",
+        "bypassed": false,
+        "params": {
+          "a": "#071678",
+          "b": "#147aff",
+          "c": "#cbf8ff",
+          "offset": 0
+        }
+      }
+    },
+    {
+      "id": "output1",
+      "type": "effect",
+      "position": {
+        "x": 740,
+        "y": 30
+      },
+      "data": {
+        "kind": "output",
+        "label": "Output",
+        "bypassed": false,
+        "params": {}
+      }
+    },
+    {
+      "id": "optical1",
+      "type": "effect",
+      "position": {
+        "x": 470,
+        "y": 0
+      },
+      "data": {
+        "kind": "optical",
+        "label": "Optical",
+        "bypassed": false,
+        "params": {
+          "glow": 38,
+          "strength": 0.6,
+          "body": 0.55,
+          "rim": 0.85,
+          "stretch": 30,
+          "speed": 0.035,
+          "background": "#070b22",
+          "renderer": "gpu"
+        }
+      }
+    },
+    {
+      "id": "spread1",
+      "type": "effect",
+      "position": {
+        "x": 200,
+        "y": 200
+      },
+      "data": {
+        "kind": "spread",
+        "label": "Silhouette Spread",
+        "bypassed": false,
+        "params": {
+          "reach": 0.55,
+          "inside": 0.2,
+          "outside": 0.85,
+          "falloff": 1.8,
+          "stretch": 0.2,
+          "softness": 0.55
+        }
+      }
+    },
+    {
+      "id": "tips1",
+      "type": "effect",
+      "position": {
+        "x": 420,
+        "y": 420
+      },
+      "data": {
+        "kind": "tips",
+        "label": "Tip Emission",
+        "bypassed": false,
+        "params": {
+          "mode": "both",
+          "length": 300,
+          "width": 45,
+          "strength": 1.6,
+          "softness": 0.5
+        }
+      }
+    },
+    {
+      "id": "ribs1",
+      "type": "effect",
+      "position": {
+        "x": 640,
+        "y": 430
+      },
+      "data": {
+        "kind": "venetian",
+        "label": "Venetian Ribs",
+        "bypassed": false,
+        "params": {
+          "direction": "straight",
+          "amount": 0.45,
+          "slats": 36,
+          "angle": 0,
+          "depth": 0.45,
+          "softness": 0.55,
+          "speed": 0.08,
+          "offset": 0,
+          "timeDisplacement": 0.08
+        }
+      }
+    },
+    {
+      "id": "pulse1",
+      "type": "effect",
+      "position": {
+        "x": 850,
+        "y": 420
+      },
+      "data": {
+        "kind": "contourPulse",
+        "label": "Contour Colour Pulse",
+        "bypassed": false,
+        "params": {
+          "frequency": 0.2,
+          "amount": 0.35,
+          "reach": 0.55,
+          "width": 0.35,
+          "sharpness": 2,
+          "phase": 0
+        }
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-ce590ad5-e",
+      "source": "shapes1",
+      "target": "optical1",
+      "sourceHandle": "out",
+      "targetHandle": "shape"
+    },
+    {
+      "id": "edge-156e990e-e",
+      "source": "palette1",
+      "target": "optical1",
+      "sourceHandle": "out",
+      "targetHandle": "palette"
+    },
+    {
+      "id": "edge-4b7df62f-3",
+      "source": "optical1",
+      "target": "output1",
+      "sourceHandle": "out",
+      "targetHandle": "image"
+    },
+    {
+      "id": "edge-a440d5be-2",
+      "source": "spread1",
+      "target": "tips1",
+      "sourceHandle": "out",
+      "targetHandle": "effects"
+    },
+    {
+      "id": "edge-e5557cf9-b",
+      "source": "tips1",
+      "target": "ribs1",
+      "sourceHandle": "out",
+      "targetHandle": "effects"
+    },
+    {
+      "id": "edge-62846412-9",
+      "source": "ribs1",
+      "target": "pulse1",
+      "sourceHandle": "out",
+      "targetHandle": "effects"
+    },
+    {
+      "id": "edge-904a04d3-2",
+      "source": "pulse1",
+      "target": "optical1",
+      "sourceHandle": "out",
+      "targetHandle": "effects"
+    }
+  ],
+  "duration": 6,
+  "preview": "output1"
+}

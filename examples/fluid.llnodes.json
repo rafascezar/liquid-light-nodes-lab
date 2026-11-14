@@ -1,0 +1,144 @@
+{
+  "version": 1,
+  "name": "Fluid · pressure and dye",
+  "nodes": [
+    {
+      "id": "shapes1",
+      "type": "effect",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "data": {
+        "kind": "shapes",
+        "label": "Shapes",
+        "bypassed": false,
+        "params": {
+          "shape": "circle",
+          "radius": 140,
+          "ellipseRatio": 1,
+          "width": 640,
+          "height": 640,
+          "corner": 80,
+          "individualCorners": false,
+          "cornerTL": 80,
+          "cornerTR": 80,
+          "cornerBR": 80,
+          "cornerBL": 80,
+          "sides": 6,
+          "roundness": 0,
+          "starPoints": 5,
+          "outerDiameter": 680,
+          "innerDiameter": 320,
+          "outerRoundness": 0,
+          "innerRoundness": 0,
+          "x": 960,
+          "y": 540,
+          "rotation": 0,
+          "fillMode": "filled",
+          "strokeWidth": 35,
+          "startAngle": 0,
+          "endAngle": 360,
+          "closure": "open",
+          "divisions": 8,
+          "detail": 256,
+          "individualRadii": false,
+          "reverse": false,
+          "scale": 1
+        }
+      }
+    },
+    {
+      "id": "palette1",
+      "type": "effect",
+      "position": {
+        "x": 0,
+        "y": 330
+      },
+      "data": {
+        "kind": "palette",
+        "label": "Gradient",
+        "bypassed": false,
+        "params": {
+          "a": "#071678",
+          "b": "#147aff",
+          "c": "#cbf8ff",
+          "offset": 0
+        }
+      }
+    },
+    {
+      "id": "output1",
+      "type": "effect",
+      "position": {
+        "x": 740,
+        "y": 30
+      },
+      "data": {
+        "kind": "output",
+        "label": "Output",
+        "bypassed": false,
+        "params": {}
+      }
+    },
+    {
+      "id": "fluid1",
+      "type": "effect",
+      "position": {
+        "x": 440,
+        "y": 0
+      },
+      "data": {
+        "kind": "fluid",
+        "label": "Fluid",
+        "bypassed": false,
+        "params": {
+          "flowSpeed": 0.13,
+          "turbulence": 0.24,
+          "eddySize": 0.54,
+          "evolution": 0.48,
+          "swirl": 0.55,
+          "viscosity": 0.32,
+          "momentum": 0.78,
+          "diffusion": 0.12,
+          "lifetime": 5.5,
+          "emission": 3,
+          "emissionWidth": 0.009,
+          "glow": 1.25,
+          "glowRadius": 0.35,
+          "exposure": 1.05,
+          "resolution": "192",
+          "direction": "outward",
+          "collision": true,
+          "seed": 17,
+          "background": "#070b22"
+        }
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-5fd5ee51-9",
+      "source": "shapes1",
+      "target": "fluid1",
+      "sourceHandle": "out",
+      "targetHandle": "shape"
+    },
+    {
+      "id": "edge-a6698d6e-8",
+      "source": "palette1",
+      "target": "fluid1",
+      "sourceHandle": "out",
+      "targetHandle": "palette"
+    },
+    {
+      "id": "edge-416094d9-9",
+      "source": "fluid1",
+      "target": "output1",
+      "sourceHandle": "out",
+      "targetHandle": "image"
+    }
+  ],
+  "duration": 6,
+  "preview": "output1"
+}

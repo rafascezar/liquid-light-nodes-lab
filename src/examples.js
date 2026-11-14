@@ -1,0 +1,11 @@
+import {newNode,connect,cleanGraph} from './model.js';
+export function featureStudy(which='shapes'){
+ let g={version:1,name:{shapes:'Shapes · one source',glass:'Glass · silhouette light',fluid:'Fluid · pressure and dye',effects:'Light · contour effects'}[which],duration:6,nodes:[],edges:[],preview:'output1'};
+ const add=(kind,id,x,y,params={})=>{const n=newNode(kind,{x,y},id);Object.assign(n.data.params,params);g.nodes.push(n);return n;},wire=(source,target,targetHandle)=>g=connect(g,{source,target,targetHandle});
+ add('shapes','shapes1',0,0,{fillMode:'outline',radius:320,strokeWidth:35});add('palette','palette1',0,330);add('output','output1',740,30);
+ if(which==='fluid'){g.name='Fluid · pressure and dye';g.nodes[0].data.params.fillMode='filled';g.nodes[0].data.params.radius=140;add('fluid','fluid1',440,0,{resolution:'192',emission:3,collision:true});wire('shapes1','fluid1','shape');wire('palette1','fluid1','palette');wire('fluid1','output1','image');}
+ else{add('optical','optical1',470,0,{renderer:which==='shapes'?'canvas':'gpu',body:.55,strength:.6});wire('shapes1','optical1','shape');wire('palette1','optical1','palette');wire('optical1','output1','image');
+ if(which==='glass'){Object.assign(g.nodes[0].data.params,{shape:'star',outerRoundness:.32,innerRoundness:.35,outerDiameter:760,innerDiameter:400,fillMode:'filled'});add('glass','glass1',230,300,{thickness:100,refraction:1.3});wire('glass1','optical1','material');add('spread','spread1',230,570,{reach:.28,inside:.3,outside:.45,stretch:.1});wire('spread1','optical1','effects');add('shapes','backshape',-300,200,{shape:'rectangle',width:95,height:1050,x:650,corner:0});add('copy','backcopy',-60,190,{count:7,x:130,y:0,scale:1,fade:1});add('optical','backlight',240,-200,{body:1,glow:0,strength:0,background:'#070b22'});wire('backshape','backcopy','shape');wire('backcopy','backlight','shape');wire('palette1','backlight','palette');wire('backlight','optical1','background');}
+ if(which==='effects'){Object.assign(g.nodes[0].data.params,{startAngle:20,endAngle:300});add('spread','spread1',200,200,{reach:.55,outside:.85});add('tips','tips1',420,420);add('venetian','ribs1',640,430);add('contourPulse','pulse1',850,420);wire('spread1','tips1','effects');wire('tips1','ribs1','effects');wire('ribs1','pulse1','effects');wire('pulse1','optical1','effects');}}
+ return cleanGraph(g);
+}

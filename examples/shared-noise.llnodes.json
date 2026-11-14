@@ -1,0 +1,324 @@
+{
+  "version": 1,
+  "name": "One Noise · three uses",
+  "nodes": [
+    {
+      "id": "circle1",
+      "type": "effect",
+      "position": {
+        "x": 0,
+        "y": 30
+      },
+      "data": {
+        "kind": "shapes",
+        "label": "Shapes",
+        "bypassed": false,
+        "params": {
+          "shape": "circle",
+          "radius": 290,
+          "ellipseRatio": 1,
+          "width": 640,
+          "height": 640,
+          "corner": 80,
+          "individualCorners": false,
+          "cornerTL": 80,
+          "cornerTR": 80,
+          "cornerBR": 80,
+          "cornerBL": 80,
+          "sides": 6,
+          "roundness": 0,
+          "starPoints": 5,
+          "outerDiameter": 680,
+          "innerDiameter": 320,
+          "outerRoundness": 0,
+          "innerRoundness": 0,
+          "x": 700,
+          "y": 540,
+          "rotation": 0,
+          "fillMode": "filled",
+          "strokeWidth": 36,
+          "startAngle": 0,
+          "endAngle": 360,
+          "closure": "open",
+          "divisions": 8,
+          "detail": 256,
+          "individualRadii": false,
+          "reverse": false,
+          "scale": 1
+        }
+      }
+    },
+    {
+      "id": "outline1",
+      "type": "effect",
+      "position": {
+        "x": 210,
+        "y": 30
+      },
+      "data": {
+        "kind": "outline",
+        "label": "Outline",
+        "bypassed": false,
+        "params": {
+          "width": 36,
+          "canvasX": 0,
+          "canvasY": 0,
+          "canvasScale": 1,
+          "canvasRotation": 0
+        }
+      }
+    },
+    {
+      "id": "copy1",
+      "type": "effect",
+      "position": {
+        "x": 420,
+        "y": 30
+      },
+      "data": {
+        "kind": "copy",
+        "label": "Copy",
+        "bypassed": false,
+        "params": {
+          "count": 4,
+          "scale": 0.93,
+          "x": 150,
+          "y": 5,
+          "rotation": 0,
+          "fade": 0.91,
+          "canvasX": 0,
+          "canvasY": 0,
+          "canvasScale": 1,
+          "canvasRotation": 0
+        }
+      }
+    },
+    {
+      "id": "displace1",
+      "type": "effect",
+      "position": {
+        "x": 660,
+        "y": 30
+      },
+      "data": {
+        "kind": "displace",
+        "label": "Displace",
+        "bypassed": false,
+        "params": {
+          "amount": 210,
+          "midpoint": 0.5,
+          "direction": "normal",
+          "canvasX": 0,
+          "canvasY": 0,
+          "canvasScale": 1,
+          "canvasRotation": 0
+        }
+      }
+    },
+    {
+      "id": "optical1",
+      "type": "effect",
+      "position": {
+        "x": 1100,
+        "y": 30
+      },
+      "data": {
+        "kind": "optical",
+        "label": "Optical",
+        "bypassed": false,
+        "params": {
+          "glow": 65,
+          "strength": 0.6,
+          "body": 0.7,
+          "rim": 0.85,
+          "stretch": 0,
+          "speed": 0,
+          "background": "#070b22",
+          "renderer": "canvas"
+        }
+      }
+    },
+    {
+      "id": "output1",
+      "type": "effect",
+      "position": {
+        "x": 1330,
+        "y": 30
+      },
+      "data": {
+        "kind": "output",
+        "label": "Output",
+        "bypassed": false,
+        "params": {}
+      }
+    },
+    {
+      "id": "noise1",
+      "type": "effect",
+      "position": {
+        "x": 210,
+        "y": 280
+      },
+      "data": {
+        "kind": "noise",
+        "label": "Noise",
+        "bypassed": false,
+        "params": {
+          "domain": "spatial",
+          "frequency": 1.5,
+          "speed": 0.17,
+          "seed": 17,
+          "octaves": 2,
+          "min": 0,
+          "max": 1,
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "id": "remap1",
+      "type": "effect",
+      "position": {
+        "x": 660,
+        "y": 300
+      },
+      "data": {
+        "kind": "remap",
+        "label": "Glow range",
+        "bypassed": false,
+        "params": {
+          "inMin": 0,
+          "inMax": 1,
+          "outMin": 0.05,
+          "outMax": 1,
+          "clamp": true,
+          "smooth": false
+        }
+      }
+    },
+    {
+      "id": "palette1",
+      "type": "effect",
+      "position": {
+        "x": 880,
+        "y": 440
+      },
+      "data": {
+        "kind": "palette",
+        "label": "Gradient",
+        "bypassed": false,
+        "params": {
+          "a": "#071678",
+          "b": "#147aff",
+          "c": "#cbf8ff",
+          "offset": 0
+        }
+      }
+    },
+    {
+      "id": "radial1",
+      "type": "effect",
+      "position": {
+        "x": 440,
+        "y": 520
+      },
+      "data": {
+        "kind": "radial",
+        "label": "Radial Field",
+        "bypassed": false,
+        "params": {
+          "x": 60,
+          "y": 50,
+          "radius": 75,
+          "squash": 0.82,
+          "falloff": 0.65,
+          "core": 0.25,
+          "strength": 1,
+          "invert": false
+        }
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-dc96a3fd-f",
+      "source": "circle1",
+      "target": "outline1",
+      "sourceHandle": "out",
+      "targetHandle": "shape"
+    },
+    {
+      "id": "edge-52b4ac27-7",
+      "source": "outline1",
+      "target": "copy1",
+      "sourceHandle": "out",
+      "targetHandle": "shape"
+    },
+    {
+      "id": "edge-bdb0d4bf-d",
+      "source": "copy1",
+      "target": "displace1",
+      "sourceHandle": "out",
+      "targetHandle": "shape"
+    },
+    {
+      "id": "edge-cb002a4c-3",
+      "source": "displace1",
+      "target": "optical1",
+      "sourceHandle": "out",
+      "targetHandle": "shape"
+    },
+    {
+      "id": "edge-13f32a6a-a",
+      "source": "optical1",
+      "target": "output1",
+      "sourceHandle": "out",
+      "targetHandle": "image"
+    },
+    {
+      "id": "edge-c98a18a0-4",
+      "source": "noise1",
+      "target": "displace1",
+      "sourceHandle": "out",
+      "targetHandle": "value"
+    },
+    {
+      "id": "edge-a3a11780-a",
+      "source": "noise1",
+      "target": "remap1",
+      "sourceHandle": "out",
+      "targetHandle": "value"
+    },
+    {
+      "id": "edge-2cb0bd0a-9",
+      "source": "remap1",
+      "target": "optical1",
+      "sourceHandle": "out",
+      "targetHandle": "param:strength"
+    },
+    {
+      "id": "edge-b5555591-6",
+      "source": "noise1",
+      "target": "palette1",
+      "sourceHandle": "out",
+      "targetHandle": "value"
+    },
+    {
+      "id": "edge-159945dc-7",
+      "source": "palette1",
+      "target": "optical1",
+      "sourceHandle": "out",
+      "targetHandle": "palette"
+    },
+    {
+      "id": "edge-ac0d2903-b",
+      "source": "radial1",
+      "target": "displace1",
+      "sourceHandle": "out",
+      "targetHandle": "mask"
+    }
+  ],
+  "duration": 12,
+  "preview": "output1"
+}

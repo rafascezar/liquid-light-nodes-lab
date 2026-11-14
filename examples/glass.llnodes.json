@@ -1,0 +1,312 @@
+{
+  "version": 1,
+  "name": "Glass · silhouette light",
+  "nodes": [
+    {
+      "id": "shapes1",
+      "type": "effect",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "data": {
+        "kind": "shapes",
+        "label": "Shapes",
+        "bypassed": false,
+        "params": {
+          "shape": "star",
+          "radius": 320,
+          "ellipseRatio": 1,
+          "width": 640,
+          "height": 640,
+          "corner": 80,
+          "individualCorners": false,
+          "cornerTL": 80,
+          "cornerTR": 80,
+          "cornerBR": 80,
+          "cornerBL": 80,
+          "sides": 6,
+          "roundness": 0,
+          "starPoints": 5,
+          "outerDiameter": 760,
+          "innerDiameter": 400,
+          "outerRoundness": 0.32,
+          "innerRoundness": 0.35,
+          "x": 960,
+          "y": 540,
+          "rotation": 0,
+          "fillMode": "filled",
+          "strokeWidth": 35,
+          "startAngle": 0,
+          "endAngle": 360,
+          "closure": "open",
+          "divisions": 8,
+          "detail": 256,
+          "individualRadii": false,
+          "reverse": false,
+          "scale": 1
+        }
+      }
+    },
+    {
+      "id": "palette1",
+      "type": "effect",
+      "position": {
+        "x": 0,
+        "y": 330
+      },
+      "data": {
+        "kind": "palette",
+        "label": "Gradient",
+        "bypassed": false,
+        "params": {
+          "a": "#071678",
+          "b": "#147aff",
+          "c": "#cbf8ff",
+          "offset": 0
+        }
+      }
+    },
+    {
+      "id": "output1",
+      "type": "effect",
+      "position": {
+        "x": 740,
+        "y": 30
+      },
+      "data": {
+        "kind": "output",
+        "label": "Output",
+        "bypassed": false,
+        "params": {}
+      }
+    },
+    {
+      "id": "optical1",
+      "type": "effect",
+      "position": {
+        "x": 470,
+        "y": 0
+      },
+      "data": {
+        "kind": "optical",
+        "label": "Optical",
+        "bypassed": false,
+        "params": {
+          "glow": 38,
+          "strength": 0.6,
+          "body": 0.55,
+          "rim": 0.85,
+          "stretch": 30,
+          "speed": 0.035,
+          "background": "#070b22",
+          "renderer": "gpu"
+        }
+      }
+    },
+    {
+      "id": "glass1",
+      "type": "effect",
+      "position": {
+        "x": 230,
+        "y": 300
+      },
+      "data": {
+        "kind": "glass",
+        "label": "Glass Material",
+        "bypassed": false,
+        "params": {
+          "thickness": 100,
+          "ior": 1.5,
+          "roughness": 0.08,
+          "transmission": 0.88,
+          "refraction": 1.3,
+          "reflection": 0.25,
+          "dispersion": 0.08
+        }
+      }
+    },
+    {
+      "id": "spread1",
+      "type": "effect",
+      "position": {
+        "x": 230,
+        "y": 570
+      },
+      "data": {
+        "kind": "spread",
+        "label": "Silhouette Spread",
+        "bypassed": false,
+        "params": {
+          "reach": 0.28,
+          "inside": 0.3,
+          "outside": 0.45,
+          "falloff": 1.8,
+          "stretch": 0.1,
+          "softness": 0.55
+        }
+      }
+    },
+    {
+      "id": "backshape",
+      "type": "effect",
+      "position": {
+        "x": -300,
+        "y": 200
+      },
+      "data": {
+        "kind": "shapes",
+        "label": "Shapes",
+        "bypassed": false,
+        "params": {
+          "shape": "rectangle",
+          "radius": 340,
+          "ellipseRatio": 1,
+          "width": 95,
+          "height": 1050,
+          "corner": 0,
+          "individualCorners": false,
+          "cornerTL": 80,
+          "cornerTR": 80,
+          "cornerBR": 80,
+          "cornerBL": 80,
+          "sides": 6,
+          "roundness": 0,
+          "starPoints": 5,
+          "outerDiameter": 680,
+          "innerDiameter": 320,
+          "outerRoundness": 0,
+          "innerRoundness": 0,
+          "x": 650,
+          "y": 540,
+          "rotation": 0,
+          "fillMode": "filled",
+          "strokeWidth": 36,
+          "startAngle": 0,
+          "endAngle": 360,
+          "closure": "open",
+          "divisions": 8,
+          "detail": 256,
+          "individualRadii": false,
+          "reverse": false,
+          "scale": 1
+        }
+      }
+    },
+    {
+      "id": "backcopy",
+      "type": "effect",
+      "position": {
+        "x": -60,
+        "y": 190
+      },
+      "data": {
+        "kind": "copy",
+        "label": "Copy",
+        "bypassed": false,
+        "params": {
+          "count": 7,
+          "scale": 1,
+          "x": 130,
+          "y": 0,
+          "rotation": 0,
+          "fade": 1,
+          "canvasX": 0,
+          "canvasY": 0,
+          "canvasScale": 1,
+          "canvasRotation": 0
+        }
+      }
+    },
+    {
+      "id": "backlight",
+      "type": "effect",
+      "position": {
+        "x": 240,
+        "y": -200
+      },
+      "data": {
+        "kind": "optical",
+        "label": "Optical",
+        "bypassed": false,
+        "params": {
+          "glow": 0,
+          "strength": 0,
+          "body": 1,
+          "rim": 0.85,
+          "stretch": 30,
+          "speed": 0.035,
+          "background": "#070b22",
+          "renderer": "canvas"
+        }
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-b7454d4f-3",
+      "source": "shapes1",
+      "target": "optical1",
+      "sourceHandle": "out",
+      "targetHandle": "shape"
+    },
+    {
+      "id": "edge-9bd44c4b-0",
+      "source": "palette1",
+      "target": "optical1",
+      "sourceHandle": "out",
+      "targetHandle": "palette"
+    },
+    {
+      "id": "edge-e649b293-a",
+      "source": "optical1",
+      "target": "output1",
+      "sourceHandle": "out",
+      "targetHandle": "image"
+    },
+    {
+      "id": "edge-e311fcd2-c",
+      "source": "glass1",
+      "target": "optical1",
+      "sourceHandle": "out",
+      "targetHandle": "material"
+    },
+    {
+      "id": "edge-067d6281-1",
+      "source": "spread1",
+      "target": "optical1",
+      "sourceHandle": "out",
+      "targetHandle": "effects"
+    },
+    {
+      "id": "edge-b5c0ad30-e",
+      "source": "backshape",
+      "target": "backcopy",
+      "sourceHandle": "out",
+      "targetHandle": "shape"
+    },
+    {
+      "id": "edge-6ef8232c-6",
+      "source": "backcopy",
+      "target": "backlight",
+      "sourceHandle": "out",
+      "targetHandle": "shape"
+    },
+    {
+      "id": "edge-4189ab96-a",
+      "source": "palette1",
+      "target": "backlight",
+      "sourceHandle": "out",
+      "targetHandle": "palette"
+    },
+    {
+      "id": "edge-8e9f311d-a",
+      "source": "backlight",
+      "target": "optical1",
+      "sourceHandle": "out",
+      "targetHandle": "background"
+    }
+  ],
+  "duration": 6,
+  "preview": "output1"
+}

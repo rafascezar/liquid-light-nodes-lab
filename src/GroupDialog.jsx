@@ -1,0 +1,12 @@
+import Dropdown from './Dropdown.jsx';
+import React,{useState} from 'react';
+import {nodeDefinition} from './model.js';
+import {upstreamIds,packGroup} from './groups.js';
+import {Modal} from './ui.jsx';
+import {parameterVisible} from './primitives.js';
+export default function GroupDialog({graph,selected,onSave,onClose,notify}){
+ const [output,setOutput]=useState(selected||graph.preview),[name,setName]=useState('My group'),[ids,setIds]=useState(()=>upstreamIds(graph,selected||graph.preview)),[exposed,setExposed]=useState([]);
+ const options=graph.nodes.filter(n=>n.data.kind!=='inlet');
+ const choose=id=>{setOutput(id);setIds(upstreamIds(graph,id));setExposed([]);};
+ return <Modal title="Create reusable group" className="group-dialog" onClose={onClose}><p className="dialog-subtitle">Choose the group’s output, then the nodes and controls to include. Connections entering the selection become typed group inputs.</p><div className="group-form"><label>Group name<input value={name} onChange={e=>setName(e.target.value)} maxLength="60"/></label><label>Output<Dropdown aria-label="Group output" value={output} onChange={e=>choose(e.target.value)}>{options.map(n=><option key={n.id} value={n.id}>{n.data.label} · {nodeDefinition(n).out}</option>)}</Dropdown></label><div className="group-columns"><div><h4>Included nodes</h4>{options.map(n=><label className="checkbox-row" key={n.id}><input type="checkbox" checked={ids.includes(n.id)} disabled={n.id===output} onChange={e=>setIds(v=>e.target.checked?[...v,n.id]:v.filter(id=>id!==n.id))}/>{n.data.label}</label>)}</div><div><h4>Expose controls</h4>{options.filter(n=>ids.includes(n.id)).map(n=><details key={n.id}><summary>{n.data.label}</summary>{Object.entries(nodeDefinition(n).params).filter(([k,d])=>d.type==='number'&&(n.data.kind!=='shapes'||parameterVisible(d,n.data.params))&&!graph.edges.some(e=>e.target===n.id&&e.targetHandle==='param:'+k)).map(([k,d])=>{const id=n.id+':'+k;return <label className="checkbox-row" key={k}><input type="checkbox" checked={exposed.includes(id)} onChange={e=>setExposed(v=>e.target.checked?[...v,id]:v.filter(x=>x!==id))}/>{d.label}</label>;})}</details>)}</div></div><button className="primary" onClick={()=>{try{const controls=exposed.map(id=>{const split=id.lastIndexOf(':');return {nodeId:id.slice(0,split),param:id.slice(split+1)};});onSave(packGroup(graph,ids,output,name.trim()||'My group',controls));}catch(e){notify(e.message,'error');}}}>Create group</button></div></Modal>;
+}

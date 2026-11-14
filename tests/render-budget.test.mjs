@@ -1,0 +1,5 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {needsGeometryContext,materialPreviewWidth,hasMaterialRendering} from '../src/render-budget.js';
+import {sharedNoiseStudy,newNode,connect,evaluate} from '../src/model.js';
+test('material previews bound interactive work independently of export dimensions',()=>{assert.equal(materialPreviewWidth(1920,false,true),480);assert.equal(materialPreviewWidth(1920,true,true),320);assert.equal(materialPreviewWidth(3840,false,false),3840);assert.equal(materialPreviewWidth(5000,false,false),3840);});
+test('spatial Noise glass needs no nearest-path context scans but path/copy consumers do',()=>{let g=sharedNoiseStudy(),glass=newNode('glass',{},'glass');g.nodes.push(glass);g=connect(g,{source:'glass',target:'optical1',targetHandle:'material'});let result=evaluate(g).value;assert.equal(hasMaterialRendering(result),true);assert.equal(needsGeometryContext(result.layers[0]),false);g.nodes.find(n=>n.id==='noise1').data.params.domain='path';result=evaluate(g).value;assert.equal(needsGeometryContext(result.layers[0]),true);});

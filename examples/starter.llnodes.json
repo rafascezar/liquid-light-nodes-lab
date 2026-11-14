@@ -1,0 +1,307 @@
+{
+  "version": 1,
+  "name": "Blue glass study",
+  "nodes": [
+    {
+      "id": "circle1",
+      "type": "effect",
+      "position": {
+        "x": 0,
+        "y": 80
+      },
+      "data": {
+        "kind": "shapes",
+        "label": "Shapes",
+        "bypassed": false,
+        "params": {
+          "shape": "circle",
+          "radius": 340,
+          "ellipseRatio": 1,
+          "width": 640,
+          "height": 640,
+          "corner": 80,
+          "individualCorners": false,
+          "cornerTL": 80,
+          "cornerTR": 80,
+          "cornerBR": 80,
+          "cornerBL": 80,
+          "sides": 6,
+          "roundness": 0,
+          "starPoints": 5,
+          "outerDiameter": 680,
+          "innerDiameter": 320,
+          "outerRoundness": 0,
+          "innerRoundness": 0,
+          "x": 760,
+          "y": 540,
+          "rotation": 0,
+          "fillMode": "filled",
+          "strokeWidth": 36,
+          "startAngle": 0,
+          "endAngle": 360,
+          "closure": "open",
+          "divisions": 8,
+          "detail": 256,
+          "individualRadii": false,
+          "reverse": false,
+          "scale": 1
+        }
+      }
+    },
+    {
+      "id": "outline1",
+      "type": "effect",
+      "position": {
+        "x": 205,
+        "y": 80
+      },
+      "data": {
+        "kind": "outline",
+        "label": "Outline",
+        "bypassed": false,
+        "params": {
+          "width": 48,
+          "canvasX": 0,
+          "canvasY": 0,
+          "canvasScale": 1,
+          "canvasRotation": 0
+        }
+      }
+    },
+    {
+      "id": "trim1",
+      "type": "effect",
+      "position": {
+        "x": 410,
+        "y": 80
+      },
+      "data": {
+        "kind": "trim",
+        "label": "Trim Path",
+        "bypassed": false,
+        "params": {
+          "start": 0,
+          "end": 88,
+          "offset": -20,
+          "canvasX": 0,
+          "canvasY": 0,
+          "canvasScale": 1,
+          "canvasRotation": 0
+        }
+      }
+    },
+    {
+      "id": "copy1",
+      "type": "effect",
+      "position": {
+        "x": 615,
+        "y": 80
+      },
+      "data": {
+        "kind": "copy",
+        "label": "Copy",
+        "bypassed": false,
+        "params": {
+          "count": 6,
+          "scale": 0.87,
+          "x": 75,
+          "y": 12,
+          "rotation": 0,
+          "fade": 0.91,
+          "canvasX": 0,
+          "canvasY": 0,
+          "canvasScale": 1,
+          "canvasRotation": 0
+        }
+      }
+    },
+    {
+      "id": "deform1",
+      "type": "effect",
+      "position": {
+        "x": 820,
+        "y": 80
+      },
+      "data": {
+        "kind": "deform",
+        "label": "Deform",
+        "bypassed": false,
+        "params": {
+          "amount": 27,
+          "frequency": 2.2,
+          "speed": 0.12,
+          "canvasX": 0,
+          "canvasY": 0,
+          "canvasScale": 1,
+          "canvasRotation": 0
+        }
+      }
+    },
+    {
+      "id": "optical1",
+      "type": "effect",
+      "position": {
+        "x": 1030,
+        "y": 80
+      },
+      "data": {
+        "kind": "optical",
+        "label": "Optical",
+        "bypassed": false,
+        "params": {
+          "glow": 38,
+          "strength": 0.6,
+          "body": 0.8,
+          "rim": 0.85,
+          "stretch": 30,
+          "speed": 0.035,
+          "background": "#070b22",
+          "renderer": "canvas"
+        }
+      }
+    },
+    {
+      "id": "output1",
+      "type": "effect",
+      "position": {
+        "x": 1260,
+        "y": 80
+      },
+      "data": {
+        "kind": "output",
+        "label": "Output",
+        "bypassed": false,
+        "params": {}
+      }
+    },
+    {
+      "id": "radial1",
+      "type": "effect",
+      "position": {
+        "x": 620,
+        "y": 270
+      },
+      "data": {
+        "kind": "radial",
+        "label": "Radial Field",
+        "bypassed": false,
+        "params": {
+          "x": 57,
+          "y": 48,
+          "radius": 52,
+          "squash": 0.82,
+          "falloff": 0.65,
+          "core": 0.25,
+          "strength": 1,
+          "invert": false
+        }
+      }
+    },
+    {
+      "id": "palette1",
+      "type": "effect",
+      "position": {
+        "x": 1030,
+        "y": 330
+      },
+      "data": {
+        "kind": "palette",
+        "label": "Gradient",
+        "bypassed": false,
+        "params": {
+          "a": "#071678",
+          "b": "#147aff",
+          "c": "#cbf8ff",
+          "offset": 0
+        }
+      }
+    },
+    {
+      "id": "lfo1",
+      "type": "effect",
+      "position": {
+        "x": 210,
+        "y": 300
+      },
+      "data": {
+        "kind": "lfo",
+        "label": "LFO",
+        "bypassed": false,
+        "params": {
+          "wave": "sine",
+          "frequency": 0.2,
+          "amplitude": 35,
+          "offset": 0,
+          "phase": 0
+        }
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-5fe42d8b-c",
+      "source": "circle1",
+      "target": "outline1",
+      "sourceHandle": "out",
+      "targetHandle": "shape"
+    },
+    {
+      "id": "edge-84250993-d",
+      "source": "outline1",
+      "target": "trim1",
+      "sourceHandle": "out",
+      "targetHandle": "shape"
+    },
+    {
+      "id": "edge-c86f2562-7",
+      "source": "trim1",
+      "target": "copy1",
+      "sourceHandle": "out",
+      "targetHandle": "shape"
+    },
+    {
+      "id": "edge-fa187999-1",
+      "source": "copy1",
+      "target": "deform1",
+      "sourceHandle": "out",
+      "targetHandle": "shape"
+    },
+    {
+      "id": "edge-be0f556c-d",
+      "source": "deform1",
+      "target": "optical1",
+      "sourceHandle": "out",
+      "targetHandle": "shape"
+    },
+    {
+      "id": "edge-605fd569-b",
+      "source": "palette1",
+      "target": "optical1",
+      "sourceHandle": "out",
+      "targetHandle": "palette"
+    },
+    {
+      "id": "edge-80d48060-c",
+      "source": "radial1",
+      "target": "deform1",
+      "sourceHandle": "out",
+      "targetHandle": "mask"
+    },
+    {
+      "id": "edge-4b7dd7ad-0",
+      "source": "radial1",
+      "target": "optical1",
+      "sourceHandle": "out",
+      "targetHandle": "field"
+    },
+    {
+      "id": "edge-bed03399-2",
+      "source": "optical1",
+      "target": "output1",
+      "sourceHandle": "out",
+      "targetHandle": "image"
+    }
+  ],
+  "duration": 6,
+  "preview": "output1"
+}

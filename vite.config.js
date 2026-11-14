@@ -1,0 +1,3 @@
+import {defineConfig} from 'vite';
+import {documents} from './server/documents.js';
+export default defineConfig({plugins:[{name:'cloud-api-preview',configureServer(server){server.middlewares.use(async(req,res,next)=>{if(!req.url?.startsWith('/api/'))return next();try{const origin='http://'+req.headers.host,request=new Request(new URL(req.url,origin),{method:req.method,headers:req.headers});const response=await documents(request,{});res.writeHead(response.status,Object.fromEntries(response.headers));res.end(await response.text());}catch{res.writeHead(503,{'content-type':'application/json'});res.end(JSON.stringify({error:'Cloud sync is available on the published site. Your local work is retained.'}));}});}}]});

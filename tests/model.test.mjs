@@ -1,0 +1,46 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';
+import {starter,newNode,evaluate,connect,validateConnection,insertOnEdge,cleanGraph,fieldAt,createHistory} from '../src/model.js';
+const node=(g,id)=>g.nodes.find(n=>n.id===id);
+test('starter evaluates the actual downstream geometry into an image',()=>{const g=starter(),r=evaluate(g);assert.equal(r.error,null);assert.equal(r.value.type,'image');assert.equal(r.value.layers[0].shapes.length,6);assert.ok(r.value.layers[0].shapes[0].points.length>100);});
+test('editing a primitive changes downstream points and preserves graph connections',()=>{const g=starter(),before=evaluate(g).value.layers[0].shapes[0].points[0];node(g,'circle1').data.params.radius+=100;const after=evaluate(g).value.layers[0].shapes[0].points[0];assert.ok(Math.hypot(after[0]-before[0],after[1]-before[1])>50);assert.equal(g.edges.length,9);});
+test('wrong port types and cycles are rejected without mutation',()=>{const g=starter(),s=JSON.stringify(g);assert.match(validateConnection(g,{source:'palette1',target:'outline1',targetHandle:'shape'}),/Palette cannot connect to shape/);assert.throws(()=>connect(g,{source:'deform1',target:'outline1',targetHandle:'shape'}),/cycle/);assert.equal(JSON.stringify(g),s);});
+test('reconnecting a required input replaces only that socket',()=>{const g=starter(),n=newNode('triangle',{x:0,y:0},'triangle1'),next=connect({...g,nodes:[...g.nodes,n]},{source:'triangle1',target:'outline1',targetHandle:'shape'});assert.equal(next.edges.filter(e=>e.target==='outline1').length,1);assert.equal(next.edges.length,g.edges.length);assert.equal(evaluate(next).error,null);});
+test('unplugging required geometry clears the preview with a useful error',()=>{const g=starter();g.edges=g.edges.filter(e=>e.target!=='outline1');const r=evaluate(g);assert.equal(r.value,null);assert.match(r.error,/Outline: shape input required/);assert.equal(node(g,'outline1').data.params.width,48);});
+test('unplugging an optional field uses the unrestricted default without deleting geometry',()=>{const g=starter(),a=evaluate(g,'deform1').value.shapes[0].points;g.edges=g.edges.filter(e=>!(e.target==='deform1'&&e.targetHandle==='mask'));const r=evaluate(g,'deform1');assert.equal(r.error,null);assert.notDeepEqual(r.value.shapes[0].points,a);assert.equal(node(g,'radial1').data.params.radius,52);});
+test('bypass passes through geometry and retains the modifier parameters',()=>{const g=starter(),n=node(g,'deform1');n.data.bypassed=true;assert.deepEqual(evaluate(g,'deform1').value,evaluate(g,'copy1').value);assert.equal(n.data.params.amount,27);n.data.bypassed=false;assert.notDeepEqual(evaluate(g,'deform1').value,evaluate(g,'copy1').value);});
+test('inserting a compatible modifier reroutes a single wire; undo restores it exactly',()=>{const g=starter(),history=createHistory(g),edge=g.edges.find(e=>e.target==='copy1'),transform=newNode('transform',{x:500,y:100},'transform1');transform.data.params.x=200;const next=insertOnEdge(g,edge.id,transform);history.record(next);assert.equal(next.nodes.length,g.nodes.length+1);assert.equal(next.edges.length,g.edges.length+1);assert.equal(evaluate(next).error,null);assert.deepEqual(history.undo(),g);assert.deepEqual(history.redo(),next);assert.throws(()=>insertOnEdge(g,edge.id,newNode('palette')),/cannot be inserted/);});
+test('LFO parameters animate a bound value rather than an unrelated global effect',()=>{let g=starter();g=connect(g,{source:'lfo1',target:'trim1',targetHandle:'param:offset'});const a=evaluate(g,'trim1',0).value,b=evaluate(g,'trim1',1).value;assert.notDeepEqual(a.shapes[0].points,b.shapes[0].points);assert.equal(node(g,'trim1').data.params.offset,-20);assert.equal(evaluate(g,'lfo1',0).value.value,0);});
+test('outlines, transforms, copy counts and trim lengths remain parametric',()=>{const g=starter();assert.equal(evaluate(g,'outline1').value.shapes[0].width,48);node(g,'copy1').data.params.count=3;assert.equal(evaluate(g,'copy1').value.shapes.length,3);node(g,'trim1').data.params.end=0;assert.equal(evaluate(g,'trim1').value.shapes[0].points.length,0);node(g,'trim1').data.params.end=100;assert.equal(evaluate(g,'trim1').value.shapes[0].closed,true);});
+test('an exponential copy network fails safely before allocating excessive geometry',()=>{const g=starter(),n=newNode('copy',undefined,'copy2');let next=connect({...g,nodes:[...g.nodes,n]},{source:'copy1',target:'copy2',targetHandle:'shape'});node(next,'copy1').data.params.count=12;node(next,'copy2').data.params.count=12;assert.match(evaluate(next,'copy2').error,/128 paths/);});
+test('field centre softness removes the radial singularity and mask stays in range',()=>{const f=evaluate(starter(),'radial1').value;assert.equal(fieldAt(f,[f.x,f.y]).core,0);for(const p of [[0,0],[1000,500],[1920,1080]]){const a=fieldAt(f,p);assert.ok(a.weight>=0&&a.weight<=1);assert.ok(a.normal.every(Number.isFinite));}assert.equal(fieldAt(f,[f.x+f.rx*2,f.y]).weight,0);});
+test('saving and opening preserves graph behavior, parameters and compatible bindings',()=>{let g=starter();g=connect(g,{source:'lfo1',target:'trim1',targetHandle:'param:offset'});const reopened=cleanGraph(JSON.parse(JSON.stringify(g)));assert.deepEqual(evaluate(reopened,'output1',.75).value,evaluate(g,'output1',.75).value);assert.equal(reopened.preview,'output1');});
+test('imports reject executable colours, duplicate IDs, dangling wires and wrong types',()=>{const g=starter();node(g,'palette1').data.params.a='url(javascript:bad)';assert.equal(node(cleanGraph(g),'palette1').data.params.a,'#071678');g.nodes.push(structuredClone(g.nodes[0]));assert.throws(()=>cleanGraph(g),/invalid node/);const bad=starter();bad.edges[0].source='missing';assert.throws(()=>cleanGraph(bad),/Both nodes/);});
+test('preview pin is independent of selection and can inspect non-image streams',()=>{const g=starter();assert.equal(evaluate(g,'radial1').value.type,'field');assert.equal(g.preview,'output1');assert.equal(evaluate(g).value.type,'image');});
+test('new edits after undo discard redo and snapshots are immutable',()=>{const g=starter(),h=createHistory(g),next=structuredClone(g);next.name='Changed';h.record(next);const prev=h.undo();prev.name='Mutation';h.record({...g,name:'New branch'});assert.equal(h.redo(),null);assert.equal(h.undo().name,g.name);});
+
+test('persistent evaluation reuses geometry when only diagram positions change',async()=>{
+ const {createEvaluator}=await import('../src/model.js');const engine=createEvaluator(),g=starter();
+ const before=engine.evaluate(g,g.preview,1),moved={...g,nodes:g.nodes.map(n=>({...n,position:{x:n.position.x+100,y:n.position.y+20}}))};
+ const after=engine.evaluate(moved,moved.preview,1);
+ assert.equal(after.error,null);assert.strictEqual(after.value,before.value);assert.strictEqual(after.cache.get('copy1'),before.cache.get('copy1'));
+});
+test('cached evaluations invalidate edited and reconnected descendants without stale previews',async()=>{
+ const {createEvaluator}=await import('../src/model.js');const engine=createEvaluator(),g=starter(),before=engine.evaluate(g,g.preview,1);
+ const changed={...g,nodes:g.nodes.map(n=>n.id==='circle1'?{...n,data:{...n.data,params:{...n.data.params,radius:450}}}:n)};
+ const after=engine.evaluate(changed,changed.preview,1);assert.notStrictEqual(after.value,before.value);assert.strictEqual(after.cache.get('radial1'),before.cache.get('radial1'));
+ const missing={...changed,edges:changed.edges.filter(e=>e.target!=='outline1')};assert.equal(engine.evaluate(missing,missing.preview,1).value,null);
+ const restored=engine.evaluate(changed,changed.preview,1);assert.equal(restored.error,null);assert.deepEqual(restored.value,after.value);
+ const rewired=connect(changed,{source:'circle1',target:'deform1',targetHandle:'shape'});assert.equal(engine.evaluate(rewired,rewired.preview,1).value.layers[0].shapes.length,1);
+});
+test('time updates reuse static upstream nodes and animate only time-dependent branches',async()=>{
+ const {createEvaluator}=await import('../src/model.js');const engine=createEvaluator(),g=starter(),first=engine.evaluate(g,g.preview,0),second=engine.evaluate(g,g.preview,1);
+ assert.equal(second.animated,true);assert.strictEqual(first.cache.get('copy1'),second.cache.get('copy1'));assert.notStrictEqual(first.cache.get('deform1'),second.cache.get('deform1'));
+ const still={...g,nodes:g.nodes.map(n=>['deform','optical'].includes(n.data.kind)?{...n,data:{...n.data,params:{...n.data.params,speed:0}}}:n)};
+ const a=engine.evaluate(still,still.preview,0),b=engine.evaluate(still,still.preview,2);assert.equal(b.animated,false);assert.strictEqual(a.value,b.value);
+});
+test('cached animated parameter bindings still update, undo and disconnect correctly',async()=>{
+ const {createEvaluator}=await import('../src/model.js');const engine=createEvaluator(),g=connect(starter(),{source:'lfo1',target:'trim1',targetHandle:'param:offset'});
+ const a=engine.evaluate(g,g.preview,0),b=engine.evaluate(g,g.preview,1);assert.notDeepEqual(a.cache.get('trim1'),b.cache.get('trim1'));
+ const unbound={...g,edges:g.edges.filter(e=>e.targetHandle!=='param:offset')};assert.deepEqual(engine.evaluate(unbound,unbound.preview,0).value,evaluate(unbound,unbound.preview,0).value);
+ assert.deepEqual(engine.evaluate(g,g.preview,0).value,a.value);
+});

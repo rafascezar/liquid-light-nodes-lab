@@ -1,0 +1,4 @@
+import {signalUses} from './signals.js';
+export function needsGeometryContext(layer){const values=[...Object.values(layer.bindings||{}),...Object.values(layer.material?.bindings||{}),layer.palette?.mapping,layer.palette?.offsetSource,...(layer.effects||[]).flatMap(e=>[...Object.values(e.bindings||{}),e.time])];return values.some(value=>signalUses(value,'path')||signalUses(value,'copy'));}
+export function materialPreviewWidth(requested,cpu=false,preview=false){return Math.max(160,Math.min(preview?(cpu?320:480):3840,Math.round(requested)));}
+export function hasMaterialRendering(value){return (value?.layers||[]).some(layer=>layer.kind==='fluid'||layer.material||(layer.effects||[]).length||layer.params?.renderer==='gpu'||layer.shapes?.some(s=>s.fillRule==='evenodd')||hasMaterialRendering(layer.backgroundImage));}

@@ -1,0 +1,133 @@
+{
+  "version": 1,
+  "name": "Shapes · one source",
+  "nodes": [
+    {
+      "id": "shapes1",
+      "type": "effect",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "data": {
+        "kind": "shapes",
+        "label": "Shapes",
+        "bypassed": false,
+        "params": {
+          "shape": "circle",
+          "radius": 320,
+          "ellipseRatio": 1,
+          "width": 640,
+          "height": 640,
+          "corner": 80,
+          "individualCorners": false,
+          "cornerTL": 80,
+          "cornerTR": 80,
+          "cornerBR": 80,
+          "cornerBL": 80,
+          "sides": 6,
+          "roundness": 0,
+          "starPoints": 5,
+          "outerDiameter": 680,
+          "innerDiameter": 320,
+          "outerRoundness": 0,
+          "innerRoundness": 0,
+          "x": 960,
+          "y": 540,
+          "rotation": 0,
+          "fillMode": "outline",
+          "strokeWidth": 35,
+          "startAngle": 0,
+          "endAngle": 360,
+          "closure": "open",
+          "divisions": 8,
+          "detail": 256,
+          "individualRadii": false,
+          "reverse": false,
+          "scale": 1
+        }
+      }
+    },
+    {
+      "id": "palette1",
+      "type": "effect",
+      "position": {
+        "x": 0,
+        "y": 330
+      },
+      "data": {
+        "kind": "palette",
+        "label": "Gradient",
+        "bypassed": false,
+        "params": {
+          "a": "#071678",
+          "b": "#147aff",
+          "c": "#cbf8ff",
+          "offset": 0
+        }
+      }
+    },
+    {
+      "id": "output1",
+      "type": "effect",
+      "position": {
+        "x": 740,
+        "y": 30
+      },
+      "data": {
+        "kind": "output",
+        "label": "Output",
+        "bypassed": false,
+        "params": {}
+      }
+    },
+    {
+      "id": "optical1",
+      "type": "effect",
+      "position": {
+        "x": 470,
+        "y": 0
+      },
+      "data": {
+        "kind": "optical",
+        "label": "Optical",
+        "bypassed": false,
+        "params": {
+          "glow": 38,
+          "strength": 0.6,
+          "body": 0.55,
+          "rim": 0.85,
+          "stretch": 30,
+          "speed": 0.035,
+          "background": "#070b22",
+          "renderer": "canvas"
+        }
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-587e1c46-7",
+      "source": "shapes1",
+      "target": "optical1",
+      "sourceHandle": "out",
+      "targetHandle": "shape"
+    },
+    {
+      "id": "edge-11bf329f-a",
+      "source": "palette1",
+      "target": "optical1",
+      "sourceHandle": "out",
+      "targetHandle": "palette"
+    },
+    {
+      "id": "edge-65c2f173-e",
+      "source": "optical1",
+      "target": "output1",
+      "sourceHandle": "out",
+      "targetHandle": "image"
+    }
+  ],
+  "duration": 6,
+  "preview": "output1"
+}

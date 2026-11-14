@@ -1,0 +1,3023 @@
+{
+  "format": "liquid-light-node-reference",
+  "version": 1,
+  "documentVersion": 1,
+  "logicalCanvas": {
+    "width": 1920,
+    "height": 1080
+  },
+  "notes": [
+    "Generated from current registry/nodeDefinition; dynamic group interfaces depend on saved group data.",
+    "Legacy circle/rectangle/triangle kinds migrate to Shapes. Inlet is internal.",
+    "Numeric parameters expose param:<key> sockets; sample describes consumer sampling."
+  ],
+  "nodes": [
+    {
+      "kind": "bitmap",
+      "name": "Image",
+      "category": "Sources",
+      "hidden": false,
+      "description": "An imported PNG, JPEG or WebP image. Connect it to a renderer’s Background to see actual glass refraction.",
+      "output": "image",
+      "inputs": [],
+      "bypass": null,
+      "params": {
+        "x": {
+          "label": "Position X",
+          "value": 960,
+          "min": -1920,
+          "max": 3840,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "y": {
+          "label": "Position Y",
+          "value": 540,
+          "min": -1080,
+          "max": 2160,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "width": {
+          "label": "Width",
+          "value": 1920,
+          "min": 10,
+          "max": 3840,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "opacity": {
+          "label": "Opacity",
+          "value": 1,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "uniform"
+        }
+      }
+    },
+    {
+      "kind": "circle",
+      "name": "Circle",
+      "category": "Sources",
+      "hidden": true,
+      "description": "A resolution-independent circular path.",
+      "output": "shape",
+      "inputs": [],
+      "bypass": null,
+      "params": {
+        "radius": {
+          "label": "Radius",
+          "value": 340,
+          "min": 10,
+          "max": 1000,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "copy"
+        },
+        "x": {
+          "label": "Centre X",
+          "value": 760,
+          "min": -960,
+          "max": 2880,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "copy"
+        },
+        "y": {
+          "label": "Centre Y",
+          "value": 540,
+          "min": -540,
+          "max": 1620,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "copy"
+        }
+      }
+    },
+    {
+      "kind": "path",
+      "name": "Editable Path",
+      "category": "Sources",
+      "hidden": false,
+      "description": "Editable vector anchors and Bézier handles. All downstream modifiers stay procedural.",
+      "output": "shape",
+      "inputs": [],
+      "bypass": null,
+      "params": {
+        "x": {
+          "label": "Position X",
+          "value": 0,
+          "min": -1920,
+          "max": 1920,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "uniform",
+          "section": "transform"
+        },
+        "y": {
+          "label": "Position Y",
+          "value": 0,
+          "min": -1080,
+          "max": 1080,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "uniform",
+          "section": "transform"
+        },
+        "scale": {
+          "label": "Scale",
+          "value": 1,
+          "min": 0.05,
+          "max": 5,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "uniform",
+          "section": "transform"
+        },
+        "rotation": {
+          "label": "Rotation",
+          "value": 0,
+          "min": -360,
+          "max": 360,
+          "step": 1,
+          "unit": "°",
+          "type": "number",
+          "sample": "uniform",
+          "section": "transform"
+        }
+      }
+    },
+    {
+      "kind": "rectangle",
+      "name": "Rectangle",
+      "category": "Sources",
+      "hidden": true,
+      "description": "A rounded rectangle, kept as an editable path.",
+      "output": "shape",
+      "inputs": [],
+      "bypass": null,
+      "params": {
+        "width": {
+          "label": "Width",
+          "value": 640,
+          "min": 20,
+          "max": 1800,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "copy"
+        },
+        "height": {
+          "label": "Height",
+          "value": 640,
+          "min": 20,
+          "max": 1800,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "copy"
+        },
+        "corner": {
+          "label": "Corner radius",
+          "value": 80,
+          "min": 0,
+          "max": 600,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "copy"
+        },
+        "x": {
+          "label": "Centre X",
+          "value": 960,
+          "min": -960,
+          "max": 2880,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "copy"
+        },
+        "y": {
+          "label": "Centre Y",
+          "value": 540,
+          "min": -540,
+          "max": 1620,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "copy"
+        }
+      }
+    },
+    {
+      "kind": "shapes",
+      "name": "Shapes",
+      "category": "Sources",
+      "hidden": false,
+      "description": "One procedural primitive source. Switch between Circle, Rectangle, Polygon and Star; each mode keeps its settings and uses the same downstream connections.",
+      "output": "shape",
+      "inputs": [],
+      "bypass": null,
+      "params": {
+        "shape": {
+          "label": "Shape",
+          "value": "circle",
+          "type": "select",
+          "options": [
+            "circle",
+            "rectangle",
+            "polygon",
+            "star"
+          ]
+        },
+        "radius": {
+          "label": "Radius",
+          "value": 340,
+          "min": 1,
+          "max": 1500,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "copy",
+          "when": [
+            "circle",
+            "polygon"
+          ]
+        },
+        "ellipseRatio": {
+          "label": "Height ratio",
+          "value": 1,
+          "min": 0.05,
+          "max": 4,
+          "step": 0.01,
+          "unit": "×",
+          "type": "number",
+          "sample": "copy",
+          "when": [
+            "circle"
+          ]
+        },
+        "width": {
+          "label": "Width",
+          "value": 640,
+          "min": 1,
+          "max": 3000,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "copy",
+          "when": [
+            "rectangle"
+          ]
+        },
+        "height": {
+          "label": "Height",
+          "value": 640,
+          "min": 1,
+          "max": 3000,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "copy",
+          "when": [
+            "rectangle"
+          ]
+        },
+        "corner": {
+          "label": "Corner radius",
+          "value": 80,
+          "min": 0,
+          "max": 1500,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "copy",
+          "when": [
+            "rectangle"
+          ],
+          "hideIf": "individualCorners"
+        },
+        "individualCorners": {
+          "label": "Individual corners",
+          "value": false,
+          "type": "boolean",
+          "when": [
+            "rectangle"
+          ]
+        },
+        "cornerTL": {
+          "label": "Top left radius",
+          "value": 80,
+          "min": 0,
+          "max": 1500,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "copy",
+          "when": [
+            "rectangle"
+          ],
+          "showIf": "individualCorners"
+        },
+        "cornerTR": {
+          "label": "Top right radius",
+          "value": 80,
+          "min": 0,
+          "max": 1500,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "copy",
+          "when": [
+            "rectangle"
+          ],
+          "showIf": "individualCorners"
+        },
+        "cornerBR": {
+          "label": "Bottom right radius",
+          "value": 80,
+          "min": 0,
+          "max": 1500,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "copy",
+          "when": [
+            "rectangle"
+          ],
+          "showIf": "individualCorners"
+        },
+        "cornerBL": {
+          "label": "Bottom left radius",
+          "value": 80,
+          "min": 0,
+          "max": 1500,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "copy",
+          "when": [
+            "rectangle"
+          ],
+          "showIf": "individualCorners"
+        },
+        "sides": {
+          "label": "Number of points",
+          "value": 6,
+          "min": 3,
+          "max": 64,
+          "step": 1,
+          "unit": "",
+          "type": "number",
+          "sample": "copy",
+          "when": [
+            "polygon"
+          ]
+        },
+        "roundness": {
+          "label": "Corner roundness",
+          "value": 0,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "copy",
+          "when": [
+            "polygon"
+          ]
+        },
+        "starPoints": {
+          "label": "Number of points",
+          "value": 5,
+          "min": 2,
+          "max": 64,
+          "step": 1,
+          "unit": "",
+          "type": "number",
+          "sample": "copy",
+          "when": [
+            "star"
+          ]
+        },
+        "outerDiameter": {
+          "label": "Outer diameter",
+          "value": 680,
+          "min": 2,
+          "max": 3000,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "copy",
+          "when": [
+            "star"
+          ]
+        },
+        "innerDiameter": {
+          "label": "Inner diameter",
+          "value": 320,
+          "min": 0,
+          "max": 3000,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "copy",
+          "when": [
+            "star"
+          ]
+        },
+        "outerRoundness": {
+          "label": "Outer roundness",
+          "value": 0,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "copy",
+          "when": [
+            "star"
+          ]
+        },
+        "innerRoundness": {
+          "label": "Inner roundness",
+          "value": 0,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "copy",
+          "when": [
+            "star"
+          ]
+        },
+        "x": {
+          "label": "Position X",
+          "value": 960,
+          "min": -1920,
+          "max": 3840,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "copy",
+          "section": "transform"
+        },
+        "y": {
+          "label": "Position Y",
+          "value": 540,
+          "min": -1080,
+          "max": 2160,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "copy",
+          "section": "transform"
+        },
+        "rotation": {
+          "label": "Rotation",
+          "value": 0,
+          "min": -720,
+          "max": 720,
+          "step": 1,
+          "unit": "°",
+          "type": "number",
+          "sample": "copy",
+          "section": "transform"
+        },
+        "fillMode": {
+          "label": "Geometry",
+          "value": "filled",
+          "type": "select",
+          "options": [
+            "filled",
+            "outline"
+          ]
+        },
+        "strokeWidth": {
+          "label": "Stroke width",
+          "value": 36,
+          "min": 1,
+          "max": 300,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "copy",
+          "showIf": "outline"
+        },
+        "startAngle": {
+          "label": "Arc start",
+          "value": 0,
+          "min": -720,
+          "max": 720,
+          "step": 1,
+          "unit": "°",
+          "type": "number",
+          "sample": "copy",
+          "when": [
+            "circle"
+          ],
+          "advanced": true
+        },
+        "endAngle": {
+          "label": "Arc end",
+          "value": 360,
+          "min": -720,
+          "max": 720,
+          "step": 1,
+          "unit": "°",
+          "type": "number",
+          "sample": "copy",
+          "when": [
+            "circle"
+          ],
+          "advanced": true
+        },
+        "closure": {
+          "label": "Arc closure",
+          "value": "open",
+          "type": "select",
+          "options": [
+            "open",
+            "chord",
+            "pie"
+          ],
+          "when": [
+            "circle"
+          ],
+          "advanced": true
+        },
+        "divisions": {
+          "label": "Edge divisions",
+          "value": 8,
+          "min": 1,
+          "max": 32,
+          "step": 1,
+          "unit": "",
+          "type": "number",
+          "sample": "copy",
+          "when": [
+            "rectangle",
+            "polygon",
+            "star"
+          ],
+          "advanced": true
+        },
+        "detail": {
+          "label": "Curve detail",
+          "value": 256,
+          "min": 16,
+          "max": 1024,
+          "step": 1,
+          "unit": "",
+          "type": "number",
+          "sample": "copy",
+          "when": [
+            "circle",
+            "rectangle"
+          ],
+          "advanced": true
+        },
+        "individualRadii": {
+          "label": "Sample radius per point",
+          "value": false,
+          "type": "boolean",
+          "when": [
+            "circle",
+            "polygon",
+            "star"
+          ],
+          "advanced": true
+        },
+        "reverse": {
+          "label": "Reverse path direction",
+          "value": false,
+          "type": "boolean",
+          "advanced": true
+        },
+        "scale": {
+          "label": "Scale",
+          "value": 1,
+          "min": 0.1,
+          "max": 4,
+          "step": 0.01,
+          "unit": "×",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        }
+      }
+    },
+    {
+      "kind": "svg",
+      "name": "SVG Graphic",
+      "category": "Sources",
+      "hidden": false,
+      "description": "Imported, sanitised vector paths. Scale, transform, duplicate and modify them without rasterising the graph.",
+      "output": "shape",
+      "inputs": [],
+      "bypass": null,
+      "params": {
+        "x": {
+          "label": "Position X",
+          "value": 0,
+          "min": -1920,
+          "max": 1920,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "uniform",
+          "section": "transform"
+        },
+        "y": {
+          "label": "Position Y",
+          "value": 0,
+          "min": -1080,
+          "max": 1080,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "uniform",
+          "section": "transform"
+        },
+        "scale": {
+          "label": "Scale",
+          "value": 1,
+          "min": 0.05,
+          "max": 5,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "uniform",
+          "section": "transform"
+        },
+        "rotation": {
+          "label": "Rotation",
+          "value": 0,
+          "min": -360,
+          "max": 360,
+          "step": 1,
+          "unit": "°",
+          "type": "number",
+          "sample": "uniform",
+          "section": "transform"
+        }
+      }
+    },
+    {
+      "kind": "triangle",
+      "name": "Triangle",
+      "category": "Sources",
+      "hidden": true,
+      "description": "A parametric three-sided path.",
+      "output": "shape",
+      "inputs": [],
+      "bypass": null,
+      "params": {
+        "radius": {
+          "label": "Radius",
+          "value": 370,
+          "min": 10,
+          "max": 1000,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "copy"
+        },
+        "x": {
+          "label": "Centre X",
+          "value": 960,
+          "min": -960,
+          "max": 2880,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "copy"
+        },
+        "y": {
+          "label": "Centre Y",
+          "value": 540,
+          "min": -540,
+          "max": 1620,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "copy"
+        }
+      }
+    },
+    {
+      "kind": "copy",
+      "name": "Copy",
+      "category": "Shape",
+      "hidden": false,
+      "description": "Create actual path instances with independent spacing and scale.",
+      "output": "shape",
+      "inputs": [
+        {
+          "id": "shape",
+          "type": "shape",
+          "required": true
+        }
+      ],
+      "bypass": "shape",
+      "params": {
+        "count": {
+          "label": "Count",
+          "value": 6,
+          "min": 1,
+          "max": 12,
+          "step": 1,
+          "unit": "",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "scale": {
+          "label": "Scale step",
+          "value": 0.87,
+          "min": 0.4,
+          "max": 1.4,
+          "step": 0.01,
+          "unit": "×",
+          "type": "number",
+          "sample": "copy"
+        },
+        "x": {
+          "label": "Step X",
+          "value": 75,
+          "min": -300,
+          "max": 300,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "copy"
+        },
+        "y": {
+          "label": "Step Y",
+          "value": 12,
+          "min": -300,
+          "max": 300,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "copy"
+        },
+        "rotation": {
+          "label": "Rotation step",
+          "value": 0,
+          "min": -90,
+          "max": 90,
+          "step": 1,
+          "unit": "°",
+          "type": "number",
+          "sample": "copy"
+        },
+        "fade": {
+          "label": "Opacity step",
+          "value": 0.91,
+          "min": 0.2,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "copy"
+        },
+        "canvasX": {
+          "label": "Translate X",
+          "value": 0,
+          "min": -1920,
+          "max": 1920,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        },
+        "canvasY": {
+          "label": "Translate Y",
+          "value": 0,
+          "min": -1080,
+          "max": 1080,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        },
+        "canvasScale": {
+          "label": "Scale",
+          "value": 1,
+          "min": 0.1,
+          "max": 4,
+          "step": 0.01,
+          "unit": "×",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        },
+        "canvasRotation": {
+          "label": "Rotate",
+          "value": 0,
+          "min": -360,
+          "max": 360,
+          "step": 1,
+          "unit": "°",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        }
+      }
+    },
+    {
+      "kind": "deform",
+      "name": "Deform",
+      "category": "Shape",
+      "hidden": false,
+      "description": "Move path points along their normals. Connect a Field to limit the effect.",
+      "output": "shape",
+      "inputs": [
+        {
+          "id": "shape",
+          "type": "shape",
+          "required": true
+        },
+        {
+          "id": "mask",
+          "type": "field",
+          "required": false
+        }
+      ],
+      "bypass": "shape",
+      "params": {
+        "amount": {
+          "label": "Amount",
+          "value": 27,
+          "min": 0,
+          "max": 160,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "point"
+        },
+        "frequency": {
+          "label": "Frequency",
+          "value": 2.2,
+          "min": 0.1,
+          "max": 10,
+          "step": 0.1,
+          "unit": "",
+          "type": "number",
+          "sample": "point"
+        },
+        "speed": {
+          "label": "Speed",
+          "value": 0.12,
+          "min": -1,
+          "max": 1,
+          "step": 0.01,
+          "unit": "Hz",
+          "type": "number",
+          "sample": "point"
+        },
+        "canvasX": {
+          "label": "Translate X",
+          "value": 0,
+          "min": -1920,
+          "max": 1920,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        },
+        "canvasY": {
+          "label": "Translate Y",
+          "value": 0,
+          "min": -1080,
+          "max": 1080,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        },
+        "canvasScale": {
+          "label": "Scale",
+          "value": 1,
+          "min": 0.1,
+          "max": 4,
+          "step": 0.01,
+          "unit": "×",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        },
+        "canvasRotation": {
+          "label": "Rotate",
+          "value": 0,
+          "min": -360,
+          "max": 360,
+          "step": 1,
+          "unit": "°",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        }
+      }
+    },
+    {
+      "kind": "displace",
+      "name": "Displace",
+      "category": "Shape",
+      "hidden": false,
+      "description": "Sample any connected value at each path point and displace it. Neutral value keeps the original contour; the optional field limits the effect.",
+      "output": "shape",
+      "inputs": [
+        {
+          "id": "shape",
+          "type": "shape",
+          "required": true
+        },
+        {
+          "id": "value",
+          "type": "signal",
+          "required": false
+        },
+        {
+          "id": "mask",
+          "type": "field",
+          "required": false
+        }
+      ],
+      "bypass": "shape",
+      "params": {
+        "amount": {
+          "label": "Amount",
+          "value": 90,
+          "min": -300,
+          "max": 300,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "point"
+        },
+        "midpoint": {
+          "label": "Neutral value",
+          "value": 0.5,
+          "min": -2,
+          "max": 2,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "point"
+        },
+        "direction": {
+          "label": "Direction",
+          "value": "normal",
+          "options": [
+            "normal",
+            "x",
+            "y"
+          ],
+          "type": "select"
+        },
+        "canvasX": {
+          "label": "Translate X",
+          "value": 0,
+          "min": -1920,
+          "max": 1920,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        },
+        "canvasY": {
+          "label": "Translate Y",
+          "value": 0,
+          "min": -1080,
+          "max": 1080,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        },
+        "canvasScale": {
+          "label": "Scale",
+          "value": 1,
+          "min": 0.1,
+          "max": 4,
+          "step": 0.01,
+          "unit": "×",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        },
+        "canvasRotation": {
+          "label": "Rotate",
+          "value": 0,
+          "min": -360,
+          "max": 360,
+          "step": 1,
+          "unit": "°",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        }
+      }
+    },
+    {
+      "kind": "outline",
+      "name": "Outline",
+      "category": "Shape",
+      "hidden": false,
+      "description": "Turn a filled path into an outline. Geometry stays editable.",
+      "output": "shape",
+      "inputs": [
+        {
+          "id": "shape",
+          "type": "shape",
+          "required": true
+        }
+      ],
+      "bypass": "shape",
+      "params": {
+        "width": {
+          "label": "Stroke width",
+          "value": 48,
+          "min": 1,
+          "max": 240,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "point"
+        },
+        "canvasX": {
+          "label": "Translate X",
+          "value": 0,
+          "min": -1920,
+          "max": 1920,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        },
+        "canvasY": {
+          "label": "Translate Y",
+          "value": 0,
+          "min": -1080,
+          "max": 1080,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        },
+        "canvasScale": {
+          "label": "Scale",
+          "value": 1,
+          "min": 0.1,
+          "max": 4,
+          "step": 0.01,
+          "unit": "×",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        },
+        "canvasRotation": {
+          "label": "Rotate",
+          "value": 0,
+          "min": -360,
+          "max": 360,
+          "step": 1,
+          "unit": "°",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        }
+      }
+    },
+    {
+      "kind": "resample",
+      "name": "Resample",
+      "category": "Shape",
+      "hidden": false,
+      "description": "Add evenly spaced points before deformation, including along straight edges. Lower spacing gives finer detail at a higher evaluation cost.",
+      "output": "shape",
+      "inputs": [
+        {
+          "id": "shape",
+          "type": "shape",
+          "required": true
+        }
+      ],
+      "bypass": "shape",
+      "params": {
+        "spacing": {
+          "label": "Point spacing",
+          "value": 10,
+          "min": 1,
+          "max": 100,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "copy"
+        },
+        "canvasX": {
+          "label": "Translate X",
+          "value": 0,
+          "min": -1920,
+          "max": 1920,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        },
+        "canvasY": {
+          "label": "Translate Y",
+          "value": 0,
+          "min": -1080,
+          "max": 1080,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        },
+        "canvasScale": {
+          "label": "Scale",
+          "value": 1,
+          "min": 0.1,
+          "max": 4,
+          "step": 0.01,
+          "unit": "×",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        },
+        "canvasRotation": {
+          "label": "Rotate",
+          "value": 0,
+          "min": -360,
+          "max": 360,
+          "step": 1,
+          "unit": "°",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        }
+      }
+    },
+    {
+      "kind": "transform",
+      "name": "Transform",
+      "category": "Shape",
+      "hidden": false,
+      "description": "Translate, rotate and scale incoming paths.",
+      "output": "shape",
+      "inputs": [
+        {
+          "id": "shape",
+          "type": "shape",
+          "required": true
+        }
+      ],
+      "bypass": "shape",
+      "params": {
+        "x": {
+          "label": "Position X",
+          "value": 0,
+          "min": -1920,
+          "max": 1920,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "copy"
+        },
+        "y": {
+          "label": "Position Y",
+          "value": 0,
+          "min": -1080,
+          "max": 1080,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "copy"
+        },
+        "scale": {
+          "label": "Scale",
+          "value": 1,
+          "min": 0.1,
+          "max": 4,
+          "step": 0.01,
+          "unit": "×",
+          "type": "number",
+          "sample": "copy"
+        },
+        "rotation": {
+          "label": "Rotation",
+          "value": 0,
+          "min": -360,
+          "max": 360,
+          "step": 1,
+          "unit": "°",
+          "type": "number",
+          "sample": "copy"
+        }
+      }
+    },
+    {
+      "kind": "trim",
+      "name": "Trim Path",
+      "category": "Shape",
+      "hidden": false,
+      "description": "Reveal a percentage of the path, with a movable starting point.",
+      "output": "shape",
+      "inputs": [
+        {
+          "id": "shape",
+          "type": "shape",
+          "required": true
+        }
+      ],
+      "bypass": "shape",
+      "params": {
+        "start": {
+          "label": "Start",
+          "value": 0,
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "type": "number",
+          "sample": "copy"
+        },
+        "end": {
+          "label": "End",
+          "value": 88,
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "type": "number",
+          "sample": "copy"
+        },
+        "offset": {
+          "label": "Offset",
+          "value": -20,
+          "min": -720,
+          "max": 720,
+          "step": 1,
+          "unit": "°",
+          "type": "number",
+          "sample": "copy"
+        },
+        "canvasX": {
+          "label": "Translate X",
+          "value": 0,
+          "min": -1920,
+          "max": 1920,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        },
+        "canvasY": {
+          "label": "Translate Y",
+          "value": 0,
+          "min": -1080,
+          "max": 1080,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        },
+        "canvasScale": {
+          "label": "Scale",
+          "value": 1,
+          "min": 0.1,
+          "max": 4,
+          "step": 0.01,
+          "unit": "×",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        },
+        "canvasRotation": {
+          "label": "Rotate",
+          "value": 0,
+          "min": -360,
+          "max": 360,
+          "step": 1,
+          "unit": "°",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        }
+      }
+    },
+    {
+      "kind": "box",
+      "name": "Box Field",
+      "category": "Fields",
+      "hidden": false,
+      "description": "A rotated rectangular mask and outward normals. Its weight can drive any numeric attribute.",
+      "output": "field",
+      "inputs": [],
+      "bypass": null,
+      "params": {
+        "x": {
+          "label": "Position X",
+          "value": 50,
+          "min": -50,
+          "max": 150,
+          "step": 1,
+          "unit": "%",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "y": {
+          "label": "Position Y",
+          "value": 50,
+          "min": -50,
+          "max": 150,
+          "step": 1,
+          "unit": "%",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "width": {
+          "label": "Width",
+          "value": 65,
+          "min": 3,
+          "max": 180,
+          "step": 1,
+          "unit": "%",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "height": {
+          "label": "Height",
+          "value": 55,
+          "min": 3,
+          "max": 180,
+          "step": 1,
+          "unit": "%",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "angle": {
+          "label": "Rotation",
+          "value": 0,
+          "min": -180,
+          "max": 180,
+          "step": 1,
+          "unit": "°",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "falloff": {
+          "label": "Falloff",
+          "value": 0.4,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "strength": {
+          "label": "Strength",
+          "value": 1,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "invert": {
+          "label": "Invert",
+          "value": false,
+          "type": "boolean"
+        }
+      }
+    },
+    {
+      "kind": "linear",
+      "name": "Linear Field",
+      "category": "Fields",
+      "hidden": false,
+      "description": "A directional gradient mask in canvas space.",
+      "output": "field",
+      "inputs": [],
+      "bypass": null,
+      "params": {
+        "x": {
+          "label": "Position X",
+          "value": 50,
+          "min": -50,
+          "max": 150,
+          "step": 1,
+          "unit": "%",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "y": {
+          "label": "Position Y",
+          "value": 50,
+          "min": -50,
+          "max": 150,
+          "step": 1,
+          "unit": "%",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "radius": {
+          "label": "Ramp width",
+          "value": 65,
+          "min": 3,
+          "max": 150,
+          "step": 1,
+          "unit": "%",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "angle": {
+          "label": "Direction",
+          "value": -25,
+          "min": -180,
+          "max": 180,
+          "step": 1,
+          "unit": "°",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "falloff": {
+          "label": "Softness",
+          "value": 0.7,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "strength": {
+          "label": "Strength",
+          "value": 1,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "invert": {
+          "label": "Invert",
+          "value": false,
+          "type": "boolean"
+        }
+      }
+    },
+    {
+      "kind": "radial",
+      "name": "Radial Field",
+      "category": "Fields",
+      "hidden": false,
+      "description": "A spatial mask and direction. Only connected nodes use this field.",
+      "output": "field",
+      "inputs": [],
+      "bypass": null,
+      "params": {
+        "x": {
+          "label": "Position X",
+          "value": 57,
+          "min": -50,
+          "max": 150,
+          "step": 1,
+          "unit": "%",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "y": {
+          "label": "Position Y",
+          "value": 48,
+          "min": -50,
+          "max": 150,
+          "step": 1,
+          "unit": "%",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "radius": {
+          "label": "Radius",
+          "value": 52,
+          "min": 3,
+          "max": 140,
+          "step": 1,
+          "unit": "%",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "squash": {
+          "label": "Height ratio",
+          "value": 0.82,
+          "min": 0.2,
+          "max": 2,
+          "step": 0.01,
+          "unit": "×",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "falloff": {
+          "label": "Falloff",
+          "value": 0.65,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "core": {
+          "label": "Centre softness",
+          "value": 0.25,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "strength": {
+          "label": "Strength",
+          "value": 1,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "invert": {
+          "label": "Invert",
+          "value": false,
+          "type": "boolean"
+        }
+      }
+    },
+    {
+      "kind": "shapeField",
+      "name": "Shape Field",
+      "category": "Fields",
+      "hidden": false,
+      "description": "Use any incoming path as a custom field. Filled area or distance from its contour supplies the mask.",
+      "output": "field",
+      "inputs": [
+        {
+          "id": "shape",
+          "type": "shape",
+          "required": true
+        }
+      ],
+      "bypass": null,
+      "params": {
+        "mode": {
+          "label": "Distance from",
+          "value": "fill",
+          "options": [
+            "fill",
+            "edge"
+          ],
+          "type": "select"
+        },
+        "reach": {
+          "label": "Falloff distance",
+          "value": 160,
+          "min": 1,
+          "max": 1000,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "strength": {
+          "label": "Strength",
+          "value": 1,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "invert": {
+          "label": "Invert",
+          "value": false,
+          "type": "boolean"
+        }
+      }
+    },
+    {
+      "kind": "math",
+      "name": "Math",
+      "category": "Values",
+      "hidden": false,
+      "description": "Combine reusable values or field weights. Multiply Noise by a field to localise its influence.",
+      "output": "signal",
+      "inputs": [
+        {
+          "id": "a",
+          "type": "signal",
+          "required": false
+        },
+        {
+          "id": "b",
+          "type": "signal",
+          "required": false
+        }
+      ],
+      "bypass": "a",
+      "params": {
+        "operation": {
+          "label": "Operation",
+          "value": "multiply",
+          "options": [
+            "multiply",
+            "add",
+            "subtract",
+            "divide",
+            "min",
+            "max",
+            "power"
+          ],
+          "type": "select"
+        },
+        "a": {
+          "label": "A fallback",
+          "value": 1,
+          "min": -2000,
+          "max": 2000,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "context"
+        },
+        "b": {
+          "label": "B fallback",
+          "value": 1,
+          "min": -2000,
+          "max": 2000,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "context"
+        }
+      }
+    },
+    {
+      "kind": "noise",
+      "name": "Noise",
+      "category": "Values",
+      "hidden": false,
+      "description": "One reusable, seeded smooth pattern. Sample it in space, along a path, per copy or uniformly. Connect Time to retime it independently.",
+      "output": "signal",
+      "inputs": [
+        {
+          "id": "time",
+          "type": "signal",
+          "required": false
+        }
+      ],
+      "bypass": null,
+      "params": {
+        "domain": {
+          "label": "Sample by",
+          "value": "spatial",
+          "options": [
+            "spatial",
+            "path",
+            "copy",
+            "uniform"
+          ],
+          "type": "select"
+        },
+        "frequency": {
+          "label": "Frequency",
+          "value": 1.8,
+          "min": 0.05,
+          "max": 24,
+          "step": 0.05,
+          "unit": "",
+          "type": "number",
+          "sample": "context"
+        },
+        "speed": {
+          "label": "Evolution speed",
+          "value": 0.15,
+          "min": 0,
+          "max": 2,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "context"
+        },
+        "seed": {
+          "label": "Seed",
+          "value": 17,
+          "min": 0,
+          "max": 9999,
+          "step": 1,
+          "unit": "",
+          "type": "number",
+          "sample": "context"
+        },
+        "octaves": {
+          "label": "Detail octaves",
+          "value": 2,
+          "min": 1,
+          "max": 4,
+          "step": 1,
+          "unit": "",
+          "type": "number",
+          "sample": "context"
+        },
+        "min": {
+          "label": "Minimum",
+          "value": 0,
+          "min": -2000,
+          "max": 2000,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "context"
+        },
+        "max": {
+          "label": "Maximum",
+          "value": 1,
+          "min": -2000,
+          "max": 2000,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "context"
+        },
+        "x": {
+          "label": "Pattern X",
+          "value": 0,
+          "min": -1920,
+          "max": 1920,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "context"
+        },
+        "y": {
+          "label": "Pattern Y",
+          "value": 0,
+          "min": -1080,
+          "max": 1080,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "context"
+        }
+      }
+    },
+    {
+      "kind": "random",
+      "name": "Random",
+      "category": "Values",
+      "hidden": false,
+      "description": "Stable seeded values for each copy, path sample or spatial cell. Scrubbing and export do not reshuffle the result.",
+      "output": "signal",
+      "inputs": [],
+      "bypass": null,
+      "params": {
+        "domain": {
+          "label": "Sample by",
+          "value": "copy",
+          "options": [
+            "copy",
+            "path",
+            "spatial",
+            "uniform"
+          ],
+          "type": "select"
+        },
+        "seed": {
+          "label": "Seed",
+          "value": 31,
+          "min": 0,
+          "max": 9999,
+          "step": 1,
+          "unit": "",
+          "type": "number",
+          "sample": "context"
+        },
+        "min": {
+          "label": "Minimum",
+          "value": 0,
+          "min": -2000,
+          "max": 2000,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "context"
+        },
+        "max": {
+          "label": "Maximum",
+          "value": 1,
+          "min": -2000,
+          "max": 2000,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "context"
+        }
+      }
+    },
+    {
+      "kind": "remap",
+      "name": "Remap",
+      "category": "Values",
+      "hidden": false,
+      "description": "Give a shared pattern a destination-specific range. The upstream Noise and every other connection stay independent.",
+      "output": "signal",
+      "inputs": [
+        {
+          "id": "value",
+          "type": "signal",
+          "required": true
+        }
+      ],
+      "bypass": "value",
+      "params": {
+        "inMin": {
+          "label": "Input minimum",
+          "value": 0,
+          "min": -2000,
+          "max": 2000,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "context"
+        },
+        "inMax": {
+          "label": "Input maximum",
+          "value": 1,
+          "min": -2000,
+          "max": 2000,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "context"
+        },
+        "outMin": {
+          "label": "Output minimum",
+          "value": 0,
+          "min": -2000,
+          "max": 2000,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "context"
+        },
+        "outMax": {
+          "label": "Output maximum",
+          "value": 1,
+          "min": -2000,
+          "max": 2000,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "context"
+        },
+        "clamp": {
+          "label": "Clamp input",
+          "value": true,
+          "type": "boolean"
+        },
+        "smooth": {
+          "label": "Smooth transition",
+          "value": false,
+          "type": "boolean"
+        }
+      }
+    },
+    {
+      "kind": "time",
+      "name": "Time",
+      "category": "Values",
+      "hidden": false,
+      "description": "The same deterministic time used by playback, scrubbing and export. Drive evolution or a numeric parameter through Math and Remap.",
+      "output": "signal",
+      "inputs": [],
+      "bypass": null,
+      "params": {
+        "speed": {
+          "label": "Rate",
+          "value": 1,
+          "min": -10,
+          "max": 10,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "context"
+        },
+        "offset": {
+          "label": "Offset",
+          "value": 0,
+          "min": -100,
+          "max": 100,
+          "step": 0.01,
+          "unit": "s",
+          "type": "number",
+          "sample": "context"
+        }
+      }
+    },
+    {
+      "kind": "palette",
+      "name": "Gradient",
+      "category": "Colour",
+      "hidden": false,
+      "description": "Map a shared value into colours. With no Value connected, use the regular image gradient.",
+      "output": "palette",
+      "inputs": [
+        {
+          "id": "value",
+          "type": "signal",
+          "required": false,
+          "label": "Colour mapping"
+        }
+      ],
+      "bypass": null,
+      "params": {
+        "a": {
+          "label": "Shadow",
+          "value": "#071678",
+          "type": "color"
+        },
+        "b": {
+          "label": "Midtone",
+          "value": "#147aff",
+          "type": "color"
+        },
+        "c": {
+          "label": "Highlight",
+          "value": "#cbf8ff",
+          "type": "color"
+        },
+        "offset": {
+          "label": "Offset",
+          "value": 0,
+          "min": -1,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "point"
+        }
+      }
+    },
+    {
+      "kind": "lfo",
+      "name": "LFO",
+      "category": "Motion",
+      "hidden": false,
+      "description": "Drive numeric attributes with a repeating value. An optional Time input retimes this signal independently.",
+      "output": "signal",
+      "inputs": [
+        {
+          "id": "time",
+          "type": "signal",
+          "required": false
+        }
+      ],
+      "bypass": null,
+      "params": {
+        "wave": {
+          "label": "Waveform",
+          "value": "sine",
+          "options": [
+            "sine",
+            "triangle",
+            "pulse"
+          ],
+          "type": "select"
+        },
+        "frequency": {
+          "label": "Frequency",
+          "value": 0.2,
+          "min": 0,
+          "max": 3,
+          "step": 0.01,
+          "unit": "Hz",
+          "type": "number",
+          "sample": "context"
+        },
+        "amplitude": {
+          "label": "Amplitude",
+          "value": 35,
+          "min": 0,
+          "max": 10000,
+          "step": 1,
+          "unit": "",
+          "type": "number",
+          "sample": "context"
+        },
+        "offset": {
+          "label": "Centre value",
+          "value": 0,
+          "min": -10000,
+          "max": 10000,
+          "step": 1,
+          "unit": "",
+          "type": "number",
+          "sample": "context"
+        },
+        "phase": {
+          "label": "Phase",
+          "value": 0,
+          "min": 0,
+          "max": 360,
+          "step": 1,
+          "unit": "°",
+          "type": "number",
+          "sample": "context"
+        }
+      }
+    },
+    {
+      "kind": "glass",
+      "name": "Glass Material",
+      "category": "Materials",
+      "hidden": false,
+      "description": "A refractive screen-space material. Thickness, IOR, roughness, transmission and reflection accept shared procedural values.",
+      "output": "material",
+      "inputs": [
+        {
+          "id": "mask",
+          "type": "field",
+          "required": false
+        }
+      ],
+      "bypass": null,
+      "params": {
+        "thickness": {
+          "label": "Thickness",
+          "value": 54,
+          "min": 1,
+          "max": 300,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "point"
+        },
+        "ior": {
+          "label": "IOR",
+          "value": 1.5,
+          "min": 1,
+          "max": 2.5,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "point"
+        },
+        "roughness": {
+          "label": "Roughness",
+          "value": 0.08,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "point"
+        },
+        "transmission": {
+          "label": "Transparency",
+          "value": 0.88,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "point"
+        },
+        "refraction": {
+          "label": "Refraction",
+          "value": 0.8,
+          "min": 0,
+          "max": 2,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "point"
+        },
+        "reflection": {
+          "label": "Reflections",
+          "value": 0.25,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "point"
+        },
+        "dispersion": {
+          "label": "Dispersion",
+          "value": 0.08,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "point"
+        }
+      }
+    },
+    {
+      "kind": "contourPulse",
+      "name": "Contour Colour Pulse",
+      "category": "Effects",
+      "hidden": false,
+      "description": "A colour and opacity wave travels outward from the contour, with a smooth attack and release.",
+      "output": "effects",
+      "inputs": [
+        {
+          "id": "effects",
+          "type": "effects",
+          "required": false
+        },
+        {
+          "id": "mask",
+          "type": "field",
+          "required": false
+        },
+        {
+          "id": "time",
+          "type": "signal",
+          "required": false
+        }
+      ],
+      "bypass": null,
+      "params": {
+        "frequency": {
+          "label": "Frequency",
+          "value": 0.2,
+          "min": -3,
+          "max": 3,
+          "step": 0.01,
+          "unit": "Hz",
+          "type": "number",
+          "sample": "point"
+        },
+        "amount": {
+          "label": "Colour amount",
+          "value": 0.35,
+          "min": -1,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "point"
+        },
+        "reach": {
+          "label": "Outward reach",
+          "value": 0.55,
+          "min": 0.01,
+          "max": 2,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "point"
+        },
+        "width": {
+          "label": "Pulse width",
+          "value": 0.35,
+          "min": 0.02,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "point"
+        },
+        "sharpness": {
+          "label": "Sharpness",
+          "value": 2,
+          "min": 0.25,
+          "max": 8,
+          "step": 0.05,
+          "unit": "",
+          "type": "number",
+          "sample": "point"
+        },
+        "phase": {
+          "label": "Phase",
+          "value": 0,
+          "min": 0,
+          "max": 360,
+          "step": 1,
+          "unit": "°",
+          "type": "number",
+          "sample": "point"
+        }
+      }
+    },
+    {
+      "kind": "spread",
+      "name": "Silhouette Spread",
+      "category": "Effects",
+      "hidden": false,
+      "description": "Light travels from the silhouette along its normals. Plug this reusable effect stack into Optical or Fluid.",
+      "output": "effects",
+      "inputs": [
+        {
+          "id": "effects",
+          "type": "effects",
+          "required": false
+        },
+        {
+          "id": "mask",
+          "type": "field",
+          "required": false
+        }
+      ],
+      "bypass": null,
+      "params": {
+        "reach": {
+          "label": "Outward reach",
+          "value": 0.45,
+          "min": 0.005,
+          "max": 2,
+          "step": 0.005,
+          "unit": "",
+          "type": "number",
+          "sample": "point"
+        },
+        "inside": {
+          "label": "Inside light",
+          "value": 0.2,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "point"
+        },
+        "outside": {
+          "label": "Outside light",
+          "value": 0.7,
+          "min": 0,
+          "max": 2,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "point"
+        },
+        "falloff": {
+          "label": "Falloff",
+          "value": 1.8,
+          "min": 0.2,
+          "max": 6,
+          "step": 0.05,
+          "unit": "",
+          "type": "number",
+          "sample": "point"
+        },
+        "stretch": {
+          "label": "Contour stretch",
+          "value": 0.2,
+          "min": 0,
+          "max": 2,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "point"
+        },
+        "softness": {
+          "label": "Softness",
+          "value": 0.55,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "point"
+        }
+      }
+    },
+    {
+      "kind": "tips",
+      "name": "Tip Emission",
+      "category": "Effects",
+      "hidden": false,
+      "description": "Emit directional light from actual open-path endpoints and tangents. Trim Path preserves the endpoints used here.",
+      "output": "effects",
+      "inputs": [
+        {
+          "id": "effects",
+          "type": "effects",
+          "required": false
+        },
+        {
+          "id": "mask",
+          "type": "field",
+          "required": false
+        }
+      ],
+      "bypass": null,
+      "params": {
+        "mode": {
+          "label": "Emit from",
+          "value": "both",
+          "options": [
+            "start",
+            "end",
+            "both"
+          ],
+          "type": "select"
+        },
+        "length": {
+          "label": "Beam length",
+          "value": 300,
+          "min": 10,
+          "max": 1200,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "point"
+        },
+        "width": {
+          "label": "Beam width",
+          "value": 45,
+          "min": 2,
+          "max": 300,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "point"
+        },
+        "strength": {
+          "label": "Intensity",
+          "value": 1.6,
+          "min": 0,
+          "max": 5,
+          "step": 0.05,
+          "unit": "",
+          "type": "number",
+          "sample": "point"
+        },
+        "softness": {
+          "label": "Softness",
+          "value": 0.5,
+          "min": 0.05,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "point"
+        }
+      }
+    },
+    {
+      "kind": "venetian",
+      "name": "Venetian Ribs",
+      "category": "Effects",
+      "hidden": false,
+      "description": "Refractive ribs warp the silhouette and light. Neighbouring ribs can sample different times, in straight or outward-normal directions.",
+      "output": "effects",
+      "inputs": [
+        {
+          "id": "effects",
+          "type": "effects",
+          "required": false
+        },
+        {
+          "id": "mask",
+          "type": "field",
+          "required": false
+        },
+        {
+          "id": "time",
+          "type": "signal",
+          "required": false
+        }
+      ],
+      "bypass": null,
+      "params": {
+        "direction": {
+          "label": "Rib direction",
+          "value": "straight",
+          "options": [
+            "straight",
+            "outward"
+          ],
+          "type": "select"
+        },
+        "amount": {
+          "label": "Amount",
+          "value": 0.45,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "point"
+        },
+        "slats": {
+          "label": "Ribs",
+          "value": 36,
+          "min": 2,
+          "max": 180,
+          "step": 1,
+          "unit": "",
+          "type": "number",
+          "sample": "point"
+        },
+        "angle": {
+          "label": "Angle",
+          "value": 0,
+          "min": -180,
+          "max": 180,
+          "step": 1,
+          "unit": "°",
+          "type": "number",
+          "sample": "point"
+        },
+        "depth": {
+          "label": "Depth",
+          "value": 0.45,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "point"
+        },
+        "softness": {
+          "label": "Softness",
+          "value": 0.55,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "point"
+        },
+        "speed": {
+          "label": "Motion speed",
+          "value": 0.08,
+          "min": -2,
+          "max": 2,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "point"
+        },
+        "offset": {
+          "label": "Offset",
+          "value": 0,
+          "min": -3,
+          "max": 3,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "point"
+        },
+        "timeDisplacement": {
+          "label": "Time displacement",
+          "value": 0.08,
+          "min": -2,
+          "max": 2,
+          "step": 0.01,
+          "unit": "s",
+          "type": "number",
+          "sample": "point"
+        }
+      }
+    },
+    {
+      "kind": "fluid",
+      "name": "Fluid",
+      "category": "Light",
+      "hidden": false,
+      "description": "An advected 2D fluid with pressure projection, viscosity, vorticity and dye transport. Seeking rebuilds a deterministic cache from time zero.",
+      "output": "image",
+      "inputs": [
+        {
+          "id": "shape",
+          "type": "shape",
+          "required": true
+        },
+        {
+          "id": "palette",
+          "type": "palette",
+          "required": false
+        },
+        {
+          "id": "field",
+          "type": "field",
+          "required": false
+        },
+        {
+          "id": "effects",
+          "type": "effects",
+          "required": false
+        },
+        {
+          "id": "background",
+          "type": "image",
+          "required": false
+        }
+      ],
+      "bypass": null,
+      "params": {
+        "flowSpeed": {
+          "label": "Flow speed",
+          "value": 0.13,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "turbulence": {
+          "label": "Turbulence",
+          "value": 0.24,
+          "min": 0,
+          "max": 2,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "eddySize": {
+          "label": "Eddy size",
+          "value": 0.54,
+          "min": 0.05,
+          "max": 2,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "evolution": {
+          "label": "Evolution",
+          "value": 0.48,
+          "min": 0,
+          "max": 2,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "swirl": {
+          "label": "Vorticity",
+          "value": 0.55,
+          "min": 0,
+          "max": 2,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "viscosity": {
+          "label": "Viscosity",
+          "value": 0.32,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "momentum": {
+          "label": "Momentum",
+          "value": 0.78,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "diffusion": {
+          "label": "Colour diffusion",
+          "value": 0.12,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "lifetime": {
+          "label": "Trail lifetime",
+          "value": 5.5,
+          "min": 0.2,
+          "max": 20,
+          "step": 0.1,
+          "unit": "s",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "emission": {
+          "label": "Emission",
+          "value": 2.1,
+          "min": 0,
+          "max": 8,
+          "step": 0.05,
+          "unit": "",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "emissionWidth": {
+          "label": "Emission width",
+          "value": 0.009,
+          "min": 0.002,
+          "max": 0.1,
+          "step": 0.001,
+          "unit": "",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "glow": {
+          "label": "Glow",
+          "value": 1.25,
+          "min": 0,
+          "max": 3,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "glowRadius": {
+          "label": "Glow softness",
+          "value": 0.35,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "exposure": {
+          "label": "Exposure",
+          "value": 1.05,
+          "min": 0.1,
+          "max": 3,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "resolution": {
+          "label": "Simulation detail",
+          "value": "256",
+          "options": [
+            "128",
+            "192",
+            "256",
+            "384",
+            "512"
+          ],
+          "type": "select"
+        },
+        "direction": {
+          "label": "Direction",
+          "value": "outward",
+          "options": [
+            "outward",
+            "upward",
+            "orbit",
+            "drift"
+          ],
+          "type": "select"
+        },
+        "collision": {
+          "label": "Source collision",
+          "value": true,
+          "type": "boolean"
+        },
+        "seed": {
+          "label": "Seed",
+          "value": 17,
+          "min": 0,
+          "max": 9999,
+          "step": 1,
+          "unit": "",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "background": {
+          "label": "Background",
+          "value": "#070b22",
+          "type": "color"
+        }
+      }
+    },
+    {
+      "kind": "optical",
+      "name": "Optical",
+      "category": "Light",
+      "hidden": false,
+      "description": "Render editable paths as light, with optional material, background and procedural effect inputs.",
+      "output": "image",
+      "inputs": [
+        {
+          "id": "shape",
+          "type": "shape",
+          "required": true
+        },
+        {
+          "id": "palette",
+          "type": "palette",
+          "required": false
+        },
+        {
+          "id": "field",
+          "type": "field",
+          "required": false
+        },
+        {
+          "id": "material",
+          "type": "material",
+          "required": false
+        },
+        {
+          "id": "effects",
+          "type": "effects",
+          "required": false
+        },
+        {
+          "id": "background",
+          "type": "image",
+          "required": false
+        }
+      ],
+      "bypass": null,
+      "params": {
+        "glow": {
+          "label": "Light spread",
+          "value": 38,
+          "min": 0,
+          "max": 120,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "point"
+        },
+        "strength": {
+          "label": "Glow intensity",
+          "value": 0.6,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "point"
+        },
+        "body": {
+          "label": "Body opacity",
+          "value": 0.8,
+          "min": 0.05,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "point"
+        },
+        "rim": {
+          "label": "Edge light",
+          "value": 0.85,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "point"
+        },
+        "stretch": {
+          "label": "Field stretch",
+          "value": 30,
+          "min": 0,
+          "max": 160,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "sample": "point"
+        },
+        "speed": {
+          "label": "Colour speed",
+          "value": 0.035,
+          "min": -0.3,
+          "max": 0.3,
+          "step": 0.005,
+          "unit": "Hz",
+          "type": "number",
+          "sample": "uniform"
+        },
+        "background": {
+          "label": "Background",
+          "value": "#070b22",
+          "type": "color"
+        },
+        "renderer": {
+          "label": "Renderer",
+          "value": "canvas",
+          "options": [
+            "canvas",
+            "gpu"
+          ],
+          "type": "select"
+        }
+      }
+    },
+    {
+      "kind": "group",
+      "name": "Node Group",
+      "category": "Assets",
+      "hidden": false,
+      "description": "A reusable subgraph with typed external connections and exposed parameters. Open the group to edit its complete internal graph.",
+      "output": "shape",
+      "inputs": [],
+      "bypass": null,
+      "params": {
+        "canvasX": {
+          "label": "Translate X",
+          "value": 0,
+          "min": -1920,
+          "max": 1920,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        },
+        "canvasY": {
+          "label": "Translate Y",
+          "value": 0,
+          "min": -1080,
+          "max": 1080,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        },
+        "canvasScale": {
+          "label": "Scale",
+          "value": 1,
+          "min": 0.1,
+          "max": 4,
+          "step": 0.01,
+          "unit": "×",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        },
+        "canvasRotation": {
+          "label": "Rotate",
+          "value": 0,
+          "min": -360,
+          "max": 360,
+          "step": 1,
+          "unit": "°",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        }
+      }
+    },
+    {
+      "kind": "inlet",
+      "name": "Group Input",
+      "category": "Assets",
+      "hidden": true,
+      "description": "Receives a typed connection or exposed parameter from the containing group.",
+      "output": "shape",
+      "inputs": [],
+      "bypass": null,
+      "params": {
+        "canvasX": {
+          "label": "Translate X",
+          "value": 0,
+          "min": -1920,
+          "max": 1920,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        },
+        "canvasY": {
+          "label": "Translate Y",
+          "value": 0,
+          "min": -1080,
+          "max": 1080,
+          "step": 1,
+          "unit": "px",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        },
+        "canvasScale": {
+          "label": "Scale",
+          "value": 1,
+          "min": 0.1,
+          "max": 4,
+          "step": 0.01,
+          "unit": "×",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        },
+        "canvasRotation": {
+          "label": "Rotate",
+          "value": 0,
+          "min": -360,
+          "max": 360,
+          "step": 1,
+          "unit": "°",
+          "type": "number",
+          "section": "transform",
+          "sample": "copy"
+        }
+      }
+    },
+    {
+      "kind": "mix",
+      "name": "Mix",
+      "category": "Output",
+      "hidden": false,
+      "description": "Combine two rendered image branches. Shape data cannot connect here.",
+      "output": "image",
+      "inputs": [
+        {
+          "id": "a",
+          "type": "image",
+          "required": true
+        },
+        {
+          "id": "b",
+          "type": "image",
+          "required": false
+        }
+      ],
+      "bypass": "a",
+      "params": {
+        "amount": {
+          "label": "Mix amount",
+          "value": 0.5,
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "unit": "",
+          "type": "number",
+          "sample": "uniform"
+        }
+      }
+    },
+    {
+      "kind": "output",
+      "name": "Output",
+      "category": "Output",
+      "hidden": false,
+      "description": "The final image. Pin it to keep seeing the result while editing upstream nodes.",
+      "output": "image",
+      "inputs": [
+        {
+          "id": "image",
+          "type": "image",
+          "required": true
+        }
+      ],
+      "bypass": null,
+      "params": {}
+    }
+  ]
+}

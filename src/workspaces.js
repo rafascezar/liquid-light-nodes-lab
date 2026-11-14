@@ -1,0 +1,21 @@
+export const WORKSPACE_KEY='liquid-light-panel-workspaces-v1';
+export const PANEL_IDS=['library','canvas','graph','inspector'];
+export const PANEL_TITLES={library:'Node Library',canvas:'Canvas',graph:'Node Graph',inspector:'Inspector'};
+export const DOCKS=['left','top','bottom','right'];
+const locations={library:'left',canvas:'top',graph:'bottom',inspector:'right'};
+const rects={library:{x:70,y:70,width:260,height:520},canvas:{x:120,y:60,width:740,height:450},graph:{x:150,y:110,width:760,height:430},inspector:{x:780,y:60,width:310,height:560}};
+const number=(n,fallback,min,max)=>Math.max(min,Math.min(max,Number.isFinite(n)?n:fallback));
+export function defaultWorkspace(){return {version:1,view:'split',mobilePanel:'canvas',leftWidth:168,rightWidth:272,split:56,active:{left:'library',top:'canvas',bottom:'graph',right:'inspector'},panels:Object.fromEntries(PANEL_IDS.map((id,i)=>[id,{placement:locations[id],home:locations[id],visible:true,z:i+1,rect:{...rects[id]}}]))};}
+export function cleanWorkspace(raw){const d=defaultWorkspace();if(!raw||raw.version!==1)return d;
+ d.view=['canvas','graph','split'].includes(raw.view)?raw.view:'split';d.mobilePanel=['canvas','nodes','inspect'].includes(raw.mobilePanel)?raw.mobilePanel:'canvas';d.leftWidth=number(raw.leftWidth,168,140,500);d.rightWidth=number(raw.rightWidth,272,200,560);d.split=number(raw.split,56,22,78);
+ for(const id of PANEL_IDS){const p=raw.panels?.[id];if(!p)continue;const r=p.rect||{},f=rects[id];d.panels[id]={placement:[...DOCKS,'float'].includes(p.placement)?p.placement:locations[id],home:DOCKS.includes(p.home)?p.home:locations[id],visible:p.visible!==false,z:number(p.z,d.panels[id].z,1,10000),rect:{x:number(r.x,f.x,0,10000),y:number(r.y,f.y,0,10000),width:number(r.width,f.width,220,2000),height:number(r.height,f.height,180,1600)}};}
+ for(const dock of DOCKS){const members=PANEL_IDS.filter(id=>d.panels[id].visible&&d.panels[id].placement===dock);d.active[dock]=members.includes(raw.active?.[dock])?raw.active[dock]:members[0]||null;}
+ return d;
+}
+export function placePanel(layout,id,placement,rect){if(!PANEL_IDS.includes(id)||![...DOCKS,'float'].includes(placement))return layout;const p=layout.panels[id],next={...layout,view:'split',panels:{...layout.panels,[id]:{...p,placement,home:placement==='float'?(p.placement==='float'?p.home:p.placement):placement,visible:true,z:Math.max(...PANEL_IDS.map(key=>layout.panels[key].z))+1,rect:rect||p.rect}},active:{...layout.active,...(placement==='float'?{}:{[placement]:id})}};return cleanWorkspace(next);}
+export function showPanel(layout,id,visible){if(!PANEL_IDS.includes(id))return layout;const p=layout.panels[id];return cleanWorkspace({...layout,panels:{...layout.panels,[id]:{...p,visible}},active:{...layout.active,...(visible&&p.placement!=='float'?{[p.placement]:id}:{})}});}
+export function fitFloatingRect(raw,width,height){const maxW=Math.max(220,width-16),maxH=Math.max(180,height-16),w=number(raw?.width,400,220,maxW),h=number(raw?.height,300,180,maxH);return {x:number(raw?.x,12,8,Math.max(8,width-w-8)),y:number(raw?.y,12,8,Math.max(8,height-h-8)),width:w,height:h};}
+export function cleanWorkspaceState(raw){const saved=[];if(raw?.version===1&&Array.isArray(raw.saved))for(const entry of raw.saved.slice(0,24)){const name=typeof entry?.name==='string'?entry.name.trim().slice(0,48):'',id=entry?.id;if(name&&name.toLowerCase()!=='default'&&typeof id==='string'&&id!=='default'&&!saved.some(s=>s.id===id||s.name.toLowerCase()===name.toLowerCase()))saved.push({id,name,layout:cleanWorkspace(entry.layout)});}
+ return {version:1,activeId:saved.some(s=>s.id===raw?.activeId)?raw.activeId:'default',current:cleanWorkspace(raw?.current),saved};
+}
+export function saveWorkspace(state,name,id){name=String(name||'').trim().slice(0,48);if(!name)throw new Error('Give this workspace a name.');if(name.toLowerCase()==='default')throw new Error('Default is reserved for the original layout.');const existing=state.saved.find(s=>s.name.toLowerCase()===name.toLowerCase());if(!existing&&state.saved.length>=24)throw new Error('You can save up to 24 workspaces.');const item={id:existing?.id||id,name,layout:cleanWorkspace(state.current)};return {...state,activeId:item.id,saved:existing?state.saved.map(s=>s.id===existing.id?item:s):[...state.saved,item]};}

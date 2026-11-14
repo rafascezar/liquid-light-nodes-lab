@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.DS_Store
+.openai/local*
+
+.build/
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+.wrangler/
+/backups/
+/handoff/
