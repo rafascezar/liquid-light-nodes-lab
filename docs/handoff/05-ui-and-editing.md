@@ -8,6 +8,8 @@ Graph panning/zoom and node diagram positions should remain separate from logica
 
 ## Direct editing
 
+The editor starts paused, including after a reload or cloud workspace restoration at startup. Loading a saved, imported or example study also pauses playback. Play and Space are the explicit playback controls; loading Fluid or Contour Effects does not start animation automatically.
+
 Press A to show shape bounding boxes/handles and field guides. Drag the centre to move, the corner handle to scale uniformly, and rotation control to rotate. Gestures update parameters on the selected node, record one undo step and do not add Transform nodes. Shape/source origins are used for native transforms; modifier output transforms remain distinct from controls like Copy step offsets. Driven transform values cannot be overwritten by manual gestures.
 
 Editable paths support anchors and Bézier in/out handles, add/delete points, smooth/corner conversion and open/close changes. `editablePaths` simplifies sampled geometry into a bounded editable representation. Converting a procedural source/modifier to a path bakes the currently evaluated output. It is explicit and undoable; later source-parameter edits no longer drive that converted result.

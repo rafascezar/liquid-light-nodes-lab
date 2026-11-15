@@ -6,6 +6,8 @@ A procedural vector, field and light editor. This Site is independent of the ori
 
 ## Run and verify
 
+The editor opens paused. Loading a saved/imported/example study also pauses playback; use Play or Space to start animation.
+
 - `npm run dev` — Vite editor. Cloud APIs require the published Site’s authenticated identity; preview keeps local copies.
 - `npm test` — graph, primitives, groups, fields, fluid determinism, workspace and cloud authorization/revision tests.
 - `node scripts/verify-shaders.mjs` — compile/link every GLSL ES 3 shader using a local EGL implementation, when available.
